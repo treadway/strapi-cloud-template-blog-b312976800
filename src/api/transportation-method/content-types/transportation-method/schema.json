@@ -1,0 +1,42 @@
+{
+	"kind": "collectionType",
+	"collectionName": "transportation_methods",
+	"info": {
+		"singularName": "transportation-method",
+		"pluralName": "transportation-methods",
+		"displayName": "Transportation Method",
+		"description": "Available transportation methods for earning points"
+	},
+	"options": {
+		"draftAndPublish": false
+	},
+	"attributes": {
+		"name": {
+			"type": "string",
+			"required": true,
+			"unique": true
+		},
+		"subtitle": {
+			"type": "string"
+		},
+		"pointsPerMile": {
+			"type": "decimal",
+			"required": true,
+			"default": 100,
+			"min": 0
+		},
+		"isActive": {
+			"type": "boolean",
+			"default": true
+		},
+		"icon": {
+			"type": "string"
+		},
+		"trips": {
+			"type": "relation",
+			"relation": "oneToMany",
+			"target": "api::trip.trip",
+			"mappedBy": "transportationMethod"
+		}
+	}
+}
