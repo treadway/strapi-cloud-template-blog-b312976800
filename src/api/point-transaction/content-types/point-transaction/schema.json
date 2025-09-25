@@ -1,0 +1,45 @@
+{
+	"kind": "collectionType",
+	"collectionName": "point_transactions",
+	"info": {
+		"singularName": "point-transaction",
+		"pluralName": "point-transactions",
+		"displayName": "Point Transaction",
+		"description": "Record of points earned and spent"
+	},
+	"options": {
+		"draftAndPublish": false
+	},
+	"attributes": {
+		"participant": {
+			"type": "relation",
+			"relation": "manyToOne",
+			"target": "api::participant.participant",
+			"inversedBy": "pointTransactions"
+		},
+		"amount": {
+			"type": "integer",
+			"required": true
+		},
+		"type": {
+			"type": "enumeration",
+			"enum": ["earned", "spent", "adjustment"],
+			"required": true
+		},
+		"description": {
+			"type": "text",
+			"required": true
+		},
+		"relatedTrip": {
+			"type": "relation",
+			"relation": "oneToOne",
+			"target": "api::trip.trip"
+		},
+		"relatedReward": {
+			"type": "relation",
+			"relation": "manyToOne",
+			"target": "api::reward.reward",
+			"inversedBy": "pointTransactions"
+		}
+	}
+}

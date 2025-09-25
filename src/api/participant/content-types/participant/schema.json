@@ -1,0 +1,61 @@
+{
+	"kind": "collectionType",
+	"collectionName": "participants",
+	"info": {
+		"singularName": "participant",
+		"pluralName": "participants",
+		"displayName": "Participant",
+		"description": "App users who earn and spend points"
+	},
+	"options": {
+		"draftAndPublish": false
+	},
+	"pluginOptions": {},
+	"attributes": {
+		"name": {
+			"type": "string",
+			"required": true
+		},
+		"phone": {
+			"type": "string",
+			"unique": true,
+			"required": true
+		},
+		"email": {
+			"type": "email"
+		},
+		"totalPoints": {
+			"type": "integer",
+			"default": 0,
+			"min": 0
+		},
+		"availablePoints": {
+			"type": "integer",
+			"default": 0,
+			"min": 0
+		},
+		"level": {
+			"type": "integer",
+			"default": 1,
+			"min": 1
+		},
+		"avatar": {
+			"type": "media",
+			"multiple": false,
+			"required": false,
+			"allowedTypes": ["images"]
+		},
+		"trips": {
+			"type": "relation",
+			"relation": "oneToMany",
+			"target": "api::trip.trip",
+			"mappedBy": "participant"
+		},
+		"pointTransactions": {
+			"type": "relation",
+			"relation": "oneToMany",
+			"target": "api::point-transaction.point-transaction",
+			"mappedBy": "participant"
+		}
+	}
+}
