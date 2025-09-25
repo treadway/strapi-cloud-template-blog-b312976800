@@ -1,0 +1,38 @@
+{
+	"kind": "singleType",
+	"collectionName": "our_future_content",
+	"info": {
+		"singularName": "our-future-content",
+		"pluralName": "our-future-contents",
+		"displayName": "Our Future Content",
+		"description": "Our future page content and sections"
+	},
+	"options": {
+		"draftAndPublish": false
+	},
+	"attributes": {
+		"whatsNextTitle": {
+			"type": "string",
+			"required": true,
+			"default": "What's Next!"
+		},
+		"whatsNextText": {
+			"type": "text",
+			"required": true
+		},
+		"whatsNextAdditionalText": {
+			"type": "text"
+		},
+		"whatsNextImage": {
+			"type": "media",
+			"multiple": false,
+			"required": false,
+			"allowedTypes": ["images"]
+		},
+		"sections": {
+			"type": "component",
+			"repeatable": true,
+			"component": "content.text-section-with-title"
+		}
+	}
+}

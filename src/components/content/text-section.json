@@ -1,0 +1,20 @@
+{
+	"collectionName": "components_content_text_sections",
+	"info": {
+		"displayName": "Text Section",
+		"description": "A text section with optional image"
+	},
+	"options": {},
+	"attributes": {
+		"text": {
+			"type": "text",
+			"required": true
+		},
+		"image": {
+			"type": "media",
+			"multiple": false,
+			"required": false,
+			"allowedTypes": ["images"]
+		}
+	}
+}

@@ -1,0 +1,34 @@
+{
+	"kind": "singleType",
+	"collectionName": "about_us_content",
+	"info": {
+		"singularName": "about-us-content",
+		"pluralName": "about-us-contents",
+		"displayName": "About Us Content",
+		"description": "About us page content and sections"
+	},
+	"options": {
+		"draftAndPublish": false
+	},
+	"attributes": {
+		"title": {
+			"type": "string",
+			"required": true,
+			"default": "And, About Us..."
+		},
+		"sections": {
+			"type": "component",
+			"repeatable": true,
+			"component": "content.text-section"
+		},
+		"contactTitle": {
+			"type": "string",
+			"required": true,
+			"default": "Contact Us"
+		},
+		"contactDescription": {
+			"type": "text",
+			"required": true
+		}
+	}
+}
