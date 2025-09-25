@@ -1,0 +1,66 @@
+{
+	"kind": "collectionType",
+	"collectionName": "trips",
+	"info": {
+		"singularName": "trip",
+		"pluralName": "trips",
+		"displayName": "Trip",
+		"description": "User transportation trips for earning points"
+	},
+	"options": {
+		"draftAndPublish": false
+	},
+	"attributes": {
+		"participant": {
+			"type": "relation",
+			"relation": "manyToOne",
+			"target": "api::participant.participant",
+			"inversedBy": "trips"
+		},
+		"transportationMethod": {
+			"type": "relation",
+			"relation": "manyToOne",
+			"target": "api::transportation-method.transportation-method",
+			"inversedBy": "trips"
+		},
+		"startAddress": {
+			"type": "text",
+			"required": true
+		},
+		"endAddress": {
+			"type": "text",
+			"required": true
+		},
+		"startLat": {
+			"type": "decimal",
+			"required": true
+		},
+		"startLng": {
+			"type": "decimal",
+			"required": true
+		},
+		"endLat": {
+			"type": "decimal",
+			"required": true
+		},
+		"endLng": {
+			"type": "decimal",
+			"required": true
+		},
+		"distanceMiles": {
+			"type": "decimal",
+			"required": true,
+			"min": 0
+		},
+		"pointsEarned": {
+			"type": "integer",
+			"required": true,
+			"min": 0
+		},
+		"status": {
+			"type": "enumeration",
+			"enum": ["pending", "completed", "cancelled"],
+			"default": "completed"
+		}
+	}
+}
