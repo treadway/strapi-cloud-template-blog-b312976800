@@ -5,10 +5,10 @@
 		"singularName": "reward",
 		"pluralName": "rewards",
 		"displayName": "Reward",
-		"description": "Redeemable rewards for points"
+		"description": "Rewards that users can redeem with points"
 	},
 	"options": {
-		"draftAndPublish": false
+		"draftAndPublish": true
 	},
 	"attributes": {
 		"title": {
@@ -16,16 +16,25 @@
 			"required": true
 		},
 		"subtitle": {
-			"type": "string"
+			"type": "string",
+			"required": true
 		},
 		"description": {
-			"type": "richtext",
+			"type": "text",
 			"required": true
 		},
 		"pointsCost": {
 			"type": "integer",
 			"required": true,
-			"min": 1
+			"min": 0
+		},
+		"category": {
+			"type": "string",
+			"required": true
+		},
+		"isActive": {
+			"type": "boolean",
+			"default": true
 		},
 		"image": {
 			"type": "media",
@@ -46,24 +55,7 @@
 		},
 		"imageFocus": {
 			"type": "json",
-			"default": {"x": 0.5, "y": 0.5}
-		}
-		"category": {
-			"type": "string"
-		},
-		"isActive": {
-			"type": "boolean",
-			"default": true
-		},
-		"inventory": {
-			"type": "integer",
-			"min": 0
-		},
-		"pointTransactions": {
-			"type": "relation",
-			"relation": "oneToMany",
-			"target": "api::point-transaction.point-transaction",
-			"mappedBy": "relatedReward"
+			"default": { "x": 0.5, "y": 0.5 }
 		}
 	}
 }
