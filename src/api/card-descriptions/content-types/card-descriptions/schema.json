@@ -2,8 +2,8 @@
 	"kind": "singleType",
 	"collectionName": "card_descriptions",
 	"info": {
-		"singularName": "card-description",
-		"pluralName": "card-descriptions",
+		"singularName": "card-descriptions",
+		"pluralName": "card-descriptions-plural",
 		"displayName": "Card Descriptions",
 		"description": "Subtexts for various cards throughout the app"
 	},
@@ -13,18 +13,15 @@
 	"attributes": {
 		"transportationMethodsSubtext": {
 			"type": "text",
-			"required": true,
-			"default": "Choose your eco-friendly transportation method to start earning points."
+			"required": true
 		},
 		"mapSubtext": {
 			"type": "text",
-			"required": true,
-			"default": "Track your journey and see your environmental impact in real-time."
+			"required": true
 		},
 		"rewardsSubtext": {
 			"type": "text",
-			"required": true,
-			"default": "Redeem your earned points for exciting rewards from local businesses."
+			"required": true
 		}
 	}
 }
