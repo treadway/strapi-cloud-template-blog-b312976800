@@ -2,7 +2,7 @@
 	"kind": "singleType",
 	"collectionName": "card_descriptions",
 	"info": {
-		"singularName": "card-descriptions",
+		"singularName": "card-description",
 		"pluralName": "card-descriptions",
 		"displayName": "Card Descriptions",
 		"description": "Subtexts for various cards throughout the app"
