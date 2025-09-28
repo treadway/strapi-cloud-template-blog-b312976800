@@ -1,0 +1,35 @@
+{
+	"kind": "collectionType",
+	"collectionName": "levels",
+	"info": {
+		"singularName": "level",
+		"pluralName": "levels",
+		"displayName": "Level",
+		"description": "User levels and achievement thresholds"
+	},
+	"options": {
+		"draftAndPublish": false
+	},
+	"attributes": {
+		"levelNumber": {
+			"type": "integer",
+			"required": true,
+			"unique": true
+		},
+		"title": {
+			"type": "string",
+			"required": true
+		},
+		"pointsRequired": {
+			"type": "biginteger",
+			"required": true
+		},
+		"description": {
+			"type": "text"
+		},
+		"isActive": {
+			"type": "boolean",
+			"default": true
+		}
+	}
+}

@@ -1,0 +1,28 @@
+{
+	"kind": "singleType",
+	"collectionName": "welcome_message",
+	"info": {
+		"singularName": "welcome-message",
+		"pluralName": "welcome-messages",
+		"displayName": "Welcome Message",
+		"description": "Login screen welcome message"
+	},
+	"options": {
+		"draftAndPublish": false
+	},
+	"attributes": {
+		"title": {
+			"type": "string",
+			"required": true,
+			"default": "Welcome to Points4Earth"
+		},
+		"subtitle": {
+			"type": "text",
+			"required": true
+		},
+		"isActive": {
+			"type": "boolean",
+			"default": true
+		}
+	}
+}
