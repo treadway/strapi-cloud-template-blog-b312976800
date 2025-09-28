@@ -1,42 +1,67 @@
 {
 	"kind": "collectionType",
-	"collectionName": "transportation_methods",
+	"collectionName": "rewards",
 	"info": {
-		"singularName": "transportation-method",
-		"pluralName": "transportation-methods",
-		"displayName": "Transportation Method",
-		"description": "Available transportation methods for earning points"
+		"singularName": "reward",
+		"pluralName": "rewards",
+		"displayName": "Reward",
+		"description": "Rewards that users can redeem with points"
 	},
 	"options": {
-		"draftAndPublish": false
+		"draftAndPublish": true
 	},
 	"attributes": {
-		"name": {
+		"title": {
 			"type": "string",
-			"required": true,
-			"unique": true
+			"required": true
 		},
 		"subtitle": {
-			"type": "string"
+			"type": "string",
+			"required": true
 		},
-		"pointsPerMile": {
-			"type": "decimal",
+		"description": {
+			"type": "text",
+			"required": true
+		},
+		"pointsCost": {
+			"type": "integer",
 			"required": true,
-			"default": 100,
 			"min": 0
+		},
+		"category": {
+			"type": "string",
+			"required": true
 		},
 		"isActive": {
 			"type": "boolean",
 			"default": true
 		},
-		"icon": {
-			"type": "string"
+		"image": {
+			"type": "media",
+			"multiple": false,
+			"required": false,
+			"allowedTypes": ["images"]
 		},
-		"trips": {
+		"imagePosition": {
+			"type": "enumeration",
+			"enum": ["top", "center", "bottom", "left", "right"],
+			"default": "center"
+		},
+		"imageScale": {
+			"type": "decimal",
+			"min": 0.1,
+			"max": 3.0,
+			"default": 1.0
+		},
+		"imageFocus": {
+			"type": "json",
+			"default": { "x": 0.5, "y": 0.5 }
+		},
+		"pointTransactions": {
 			"type": "relation",
 			"relation": "oneToMany",
-			"target": "api::trip.trip",
-			"mappedBy": "transportationMethod"
+			"target": "api::point-transaction.point-transaction",
+			"mappedBy": "relatedReward"
 		}
 	}
 }
