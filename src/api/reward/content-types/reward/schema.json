@@ -56,6 +56,12 @@
 		"imageFocus": {
 			"type": "json",
 			"default": { "x": 0.5, "y": 0.5 }
+		},
+		"pointTransactions": {
+			"type": "relation",
+			"relation": "oneToMany",
+			"target": "api::point-transaction.point-transaction",
+			"mappedBy": "relatedReward"
 		}
 	}
 }
