@@ -1,0 +1,27 @@
+{
+	"collectionName": "components_onboarding_flow_steps",
+	"info": {
+		"displayName": "Flow Step",
+		"description": "Individual step in a flow section"
+	},
+	"attributes": {
+		"stepNumber": {
+			"type": "integer",
+			"required": true
+		},
+		"stepTitle": {
+			"type": "string",
+			"required": true
+		},
+		"stepDescription": {
+			"type": "text",
+			"required": true
+		},
+		"stepImage": {
+			"type": "media",
+			"multiple": false,
+			"required": false,
+			"allowedTypes": ["images"]
+		}
+	}
+}

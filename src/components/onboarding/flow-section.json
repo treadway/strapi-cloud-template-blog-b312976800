@@ -1,0 +1,29 @@
+{
+	"collectionName": "components_onboarding_flow_sections",
+	"info": {
+		"displayName": "Flow Section",
+		"description": "A section with multiple steps for user flows"
+	},
+	"attributes": {
+		"sectionTitle": {
+			"type": "string",
+			"required": true
+		},
+		"sectionSubtitle": {
+			"type": "text",
+			"required": false
+		},
+		"sectionImage": {
+			"type": "media",
+			"multiple": false,
+			"required": false,
+			"allowedTypes": ["images"]
+		},
+		"steps": {
+			"type": "component",
+			"repeatable": true,
+			"component": "onboarding.flow-step",
+			"required": true
+		}
+	}
+}

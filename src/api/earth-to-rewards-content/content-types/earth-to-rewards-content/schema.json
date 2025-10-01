@@ -1,0 +1,30 @@
+{
+	"kind": "singleType",
+	"collectionName": "earth_to_rewards_content",
+	"info": {
+		"singularName": "earth-to-rewards-content",
+		"pluralName": "earth-to-rewards-contents",
+		"displayName": "Earth to Rewards Content",
+		"description": "Onboarding flow content with checkable steps"
+	},
+	"options": {
+		"draftAndPublish": false
+	},
+	"attributes": {
+		"title": {
+			"type": "string",
+			"required": true,
+			"default": "From Earth to Rewards"
+		},
+		"subtitle": {
+			"type": "text",
+			"required": false
+		},
+		"sections": {
+			"type": "component",
+			"repeatable": true,
+			"component": "onboarding.flow-section",
+			"required": true
+		}
+	}
+}
