@@ -70,6 +70,9 @@ module.exports = {
 					});
 			}
 
+			const jwtService = strapi.plugin("users-permissions").service("jwt");
+			console.log("JWT service methods:", Object.keys(jwtService));
+
 			const getService = (name) => {
 				return strapi.plugin("users-permissions").service(name);
 			};
