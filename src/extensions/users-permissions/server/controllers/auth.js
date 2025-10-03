@@ -8,7 +8,28 @@ const twilioClient = twilio(
 
 module.exports = {
 	async sendVerificationCode(ctx) {
-		// ... existing code ...
+		const { phoneNumber } = ctx.request.body;
+
+		if (!phoneNumber) {
+			return ctx.badRequest("Phone number is required");
+		}
+
+		try {
+			const verification = await twilioClient.verify.v2
+				.services(process.env.TWILIO_VERIFY_SERVICE_SID)
+				.verifications.create({
+					to: phoneNumber,
+					channel: "sms",
+				});
+
+			ctx.send({
+				message: "Verification code sent",
+				status: verification.status,
+			});
+		} catch (error) {
+			console.error("Twilio verification error:", error);
+			ctx.badRequest(error.message || "Failed to send verification code");
+		}
 	},
 
 	async verifyCodeAndAuth(ctx) {
