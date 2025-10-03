@@ -70,6 +70,9 @@ module.exports = {
 					});
 			}
 
+			console.log("Strapi plugin check:", strapi.plugin("users-permissions"));
+			console.log("Available services:", Object.keys(strapi.services));
+
 			try {
 				const jwt = strapi.service("plugin::users-permissions.jwt").issue({
 					id: participant.id,
