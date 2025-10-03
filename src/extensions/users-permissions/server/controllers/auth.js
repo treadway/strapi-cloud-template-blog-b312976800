@@ -1,5 +1,3 @@
-// src/extensions/users-permissions/controllers/auth.js
-const { sanitize } = require("@strapi/utils");
 const twilio = require("twilio");
 
 const twilioClient = twilio(
@@ -7,9 +5,8 @@ const twilioClient = twilio(
 	process.env.TWILIO_AUTH_TOKEN
 );
 
-module.exports = (plugin) => {
-	// Send verification code
-	plugin.controllers.auth.sendVerificationCode = async (ctx) => {
+module.exports = {
+	async sendVerificationCode(ctx) {
 		const { phoneNumber } = ctx.request.body;
 
 		if (!phoneNumber) {
@@ -30,12 +27,11 @@ module.exports = (plugin) => {
 			});
 		} catch (error) {
 			console.error("Twilio verification error:", error);
-			ctx.badRequest("Failed to send verification code");
+			ctx.badRequest(error.message || "Failed to send verification code");
 		}
-	};
+	},
 
-	// Verify code and authenticate
-	plugin.controllers.auth.verifyCodeAndAuth = async (ctx) => {
+	async verifyCodeAndAuth(ctx) {
 		const { phoneNumber, code } = ctx.request.body;
 
 		if (!phoneNumber || !code) {
@@ -43,7 +39,6 @@ module.exports = (plugin) => {
 		}
 
 		try {
-			// Verify code with Twilio
 			const verificationCheck = await twilioClient.verify.v2
 				.services(process.env.TWILIO_VERIFY_SERVICE_SID)
 				.verificationChecks.create({
@@ -55,7 +50,6 @@ module.exports = (plugin) => {
 				return ctx.badRequest("Invalid verification code");
 			}
 
-			// Find or create participant
 			let participant = await strapi.db
 				.query("api::participant.participant")
 				.findOne({
@@ -63,7 +57,6 @@ module.exports = (plugin) => {
 				});
 
 			if (!participant) {
-				// Create new participant
 				participant = await strapi.db
 					.query("api::participant.participant")
 					.create({
@@ -77,23 +70,17 @@ module.exports = (plugin) => {
 					});
 			}
 
-			// Generate JWT token
 			const jwt = strapi.plugins["users-permissions"].services.jwt.issue({
 				id: participant.id,
 			});
 
 			ctx.send({
 				jwt,
-				participant: await sanitize.contentAPI.output(
-					participant,
-					strapi.getModel("api::participant.participant")
-				),
+				participant,
 			});
 		} catch (error) {
 			console.error("Verification error:", error);
-			ctx.badRequest("Verification failed");
+			ctx.badRequest(error.message || "Verification failed");
 		}
-	};
-
-	return plugin;
+	},
 };
