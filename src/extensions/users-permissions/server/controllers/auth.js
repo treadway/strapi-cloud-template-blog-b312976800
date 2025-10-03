@@ -70,7 +70,7 @@ module.exports = {
 					});
 			}
 
-			const jwt = strapi.plugins["users-permissions"].services.jwt.issue({
+			const jwt = strapi.service("plugin::users-permissions.jwt").sign({
 				id: participant.id,
 			});
 
