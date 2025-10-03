@@ -74,7 +74,7 @@ module.exports = {
 				return strapi.plugin("users-permissions").service(name);
 			};
 
-			const jwt = getService("jwt").sign({
+			const jwt = getService("jwt").issue({
 				id: participant.id,
 			});
 
