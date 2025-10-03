@@ -1,4 +1,5 @@
 const twilio = require("twilio");
+const jwt = require("jsonwebtoken"); // Add this
 
 const twilioClient = twilio(
 	process.env.TWILIO_ACCOUNT_SID,
@@ -7,28 +8,7 @@ const twilioClient = twilio(
 
 module.exports = {
 	async sendVerificationCode(ctx) {
-		const { phoneNumber } = ctx.request.body;
-
-		if (!phoneNumber) {
-			return ctx.badRequest("Phone number is required");
-		}
-
-		try {
-			const verification = await twilioClient.verify.v2
-				.services(process.env.TWILIO_VERIFY_SERVICE_SID)
-				.verifications.create({
-					to: phoneNumber,
-					channel: "sms",
-				});
-
-			ctx.send({
-				message: "Verification code sent",
-				status: verification.status,
-			});
-		} catch (error) {
-			console.error("Twilio verification error:", error);
-			ctx.badRequest(error.message || "Failed to send verification code");
-		}
+		// ... existing code ...
 	},
 
 	async verifyCodeAndAuth(ctx) {
@@ -70,30 +50,18 @@ module.exports = {
 					});
 			}
 
-			console.log("Strapi plugin check:", strapi.plugin("users-permissions"));
-			console.log("Available services:", Object.keys(strapi.services));
+			// Generate JWT manually using jsonwebtoken
+			const token = jwt.sign(
+				{ id: participant.id },
+				process.env.JWT_SECRET ||
+					strapi.config.get("plugin.users-permissions.jwtSecret"),
+				{ expiresIn: "7d" }
+			);
 
-			try {
-				const jwt = strapi.service("plugin::users-permissions.jwt").issue({
-					id: participant.id,
-				});
-
-				ctx.send({
-					jwt,
-					participant,
-				});
-			} catch (jwtError) {
-				console.error("JWT creation error:", jwtError);
-				// Try alternate method
-				const token = strapi.plugin("users-permissions").service("jwt").issue({
-					id: participant.id,
-				});
-
-				ctx.send({
-					jwt: token,
-					participant,
-				});
-			}
+			ctx.send({
+				jwt: token,
+				participant,
+			});
 		} catch (error) {
 			console.error("Verification error:", error);
 			ctx.badRequest(error.message || "Verification failed");
