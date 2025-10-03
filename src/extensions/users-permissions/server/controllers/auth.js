@@ -70,19 +70,27 @@ module.exports = {
 					});
 			}
 
-			const jwtService = strapi.plugin("users-permissions").service("jwt");
-			console.log("JWT service methods:", Object.keys(jwtService));
+			try {
+				const jwt = strapi.service("plugin::users-permissions.jwt").issue({
+					id: participant.id,
+				});
 
-			const getService = (name) => {
-				return strapi.plugin("users-permissions").service(name);
-			};
+				ctx.send({
+					jwt,
+					participant,
+				});
+			} catch (jwtError) {
+				console.error("JWT creation error:", jwtError);
+				// Try alternate method
+				const token = strapi.plugin("users-permissions").service("jwt").issue({
+					id: participant.id,
+				});
 
-			const jwt = await jwtService.getToken({ id: participant.id });
-
-			ctx.send({
-				jwt,
-				participant,
-			});
+				ctx.send({
+					jwt: token,
+					participant,
+				});
+			}
 		} catch (error) {
 			console.error("Verification error:", error);
 			ctx.badRequest(error.message || "Verification failed");
