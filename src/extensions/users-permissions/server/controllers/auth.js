@@ -70,9 +70,9 @@ module.exports = {
 					});
 			}
 
-			const jwt = strapi.plugins["users-permissions"].services.jwt.sign({
-				id: participant.id,
-			});
+			const jwt = await strapi.plugins["users-permissions"].services[
+				"jwt"
+			].sign({ id: participant.id });
 
 			ctx.send({
 				jwt,
