@@ -1,5 +1,8 @@
 const auth = require("./auth");
 
 module.exports = {
-	auth,
+	"content-api": {
+		type: "content-api",
+		routes: auth,
+	},
 };
