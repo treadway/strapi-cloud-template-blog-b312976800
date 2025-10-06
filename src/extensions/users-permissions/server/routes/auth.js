@@ -1,22 +1,18 @@
-const routes = [
+export default [
 	{
 		method: "POST",
-		path: "/auth/send-code",
-		handler: "auth.sendVerificationCode",
+		path: "/send-code",
+		handler: "auth.sendVerificationCode", // Calls sendVerificationCode in controller
 		config: {
-			auth: false,
-			prefix: "",
+			auth: false, // No authentication needed for this route
 		},
 	},
 	{
 		method: "POST",
-		path: "/auth/verify-code",
-		handler: "auth.verifyCodeAndAuth",
+		path: "/verify-code",
+		handler: "auth.verifyCodeAndAuth", // Calls verifyCodeAndAuth in controller
 		config: {
-			auth: false,
-			prefix: "",
+			auth: false, // No authentication needed for this route
 		},
 	},
 ];
-
-export default routes;

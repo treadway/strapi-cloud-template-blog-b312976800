@@ -51,6 +51,7 @@ const auth = {
 				return ctx.badRequest("Invalid verification code");
 			}
 
+			// Find the user or create a new one if not found
 			let participant = await strapi.db
 				.query("api::participant.participant")
 				.findOne({
@@ -71,7 +72,7 @@ const auth = {
 					});
 			}
 
-			// Generate JWT manually using jsonwebtoken
+			// Generate JWT token for the participant
 			const token = jwt.sign(
 				{ id: participant.id },
 				process.env.JWT_SECRET ||
