@@ -1,8 +1,10 @@
-const auth = require("./auth");
+import auth from "./auth.js";
 
-module.exports = {
+const routes = {
 	"content-api": {
 		type: "content-api",
 		routes: auth,
 	},
 };
+
+export default routes;

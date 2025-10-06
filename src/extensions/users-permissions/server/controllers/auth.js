@@ -1,12 +1,12 @@
-const twilio = require("twilio");
-const jwt = require("jsonwebtoken"); // Add this
+import twilio from "twilio";
+import jwt from "jsonwebtoken";
 
 const twilioClient = twilio(
 	process.env.TWILIO_ACCOUNT_SID,
 	process.env.TWILIO_AUTH_TOKEN
 );
 
-module.exports = {
+const auth = {
 	async sendVerificationCode(ctx) {
 		const { phoneNumber } = ctx.request.body;
 
@@ -44,7 +44,7 @@ module.exports = {
 				.services(process.env.TWILIO_VERIFY_SERVICE_SID)
 				.verificationChecks.create({
 					to: phoneNumber,
-					code: code,
+					code,
 				});
 
 			if (verificationCheck.status !== "approved") {
@@ -89,3 +89,5 @@ module.exports = {
 		}
 	},
 };
+
+export default auth;

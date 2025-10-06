@@ -1,5 +1,7 @@
-const auth = require("./auth");
+import auth from "./auth.js";
 
-module.exports = {
+const controllers = {
 	auth,
 };
+
+export default controllers;

@@ -1,4 +1,4 @@
-module.exports = [
+const routes = [
 	{
 		method: "POST",
 		path: "/auth/send-code",
@@ -18,3 +18,5 @@ module.exports = [
 		},
 	},
 ];
+
+export default routes;
