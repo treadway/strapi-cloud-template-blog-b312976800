@@ -1,3 +1,5 @@
+"use strict";
+
 const twilio = require("twilio");
 
 // Initialize Twilio client
@@ -8,7 +10,7 @@ const verifyServiceSid = process.env.TWILIO_VERIFY_SERVICE_SID;
 const twilioClient = twilio(accountSid, authToken);
 
 module.exports = {
-	async sendCode(ctx) {
+	sendCode: async (ctx) => {
 		try {
 			const { phoneNumber } = ctx.request.body;
 
@@ -18,7 +20,6 @@ module.exports = {
 
 			console.log("Sending verification code to:", phoneNumber);
 
-			// Send verification code via Twilio
 			const verification = await twilioClient.verify.v2
 				.services(verifyServiceSid)
 				.verifications.create({
@@ -38,7 +39,7 @@ module.exports = {
 		}
 	},
 
-	async verifyCode(ctx) {
+	verifyCode: async (ctx) => {
 		try {
 			const { phoneNumber, code } = ctx.request.body;
 
@@ -48,7 +49,6 @@ module.exports = {
 
 			console.log("Verifying code for:", phoneNumber);
 
-			// Verify code with Twilio
 			const verificationCheck = await twilioClient.verify.v2
 				.services(verifyServiceSid)
 				.verificationChecks.create({
@@ -62,7 +62,6 @@ module.exports = {
 
 			console.log("Code verified successfully");
 
-			// Find or create participant
 			let participant = await strapi.db
 				.query("api::participant.participant")
 				.findOne({
@@ -86,7 +85,6 @@ module.exports = {
 				console.log("Found existing participant:", participant.id);
 			}
 
-			// Find or create Users & Permissions user
 			const pluginStore = await strapi.store({
 				type: "plugin",
 				name: "users-permissions",
@@ -120,7 +118,6 @@ module.exports = {
 				console.log("Found existing user:", user.id);
 			}
 
-			// Create JWT token with USER id
 			const jwt = strapi.plugins["users-permissions"].services.jwt.issue({
 				id: user.id,
 			});
