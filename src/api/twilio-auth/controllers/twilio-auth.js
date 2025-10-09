@@ -147,24 +147,32 @@ module.exports = {
 				return ctx.badRequest("Name and phone number are required");
 			}
 
-			console.log("Creating/updating participant:", { name, phoneNumber });
+			// Normalize phone format - remove the + for storage
+			const normalizedPhone = phoneNumber.replace(/^\+/, "");
+
+			console.log("Creating/updating participant:", {
+				name,
+				phoneNumber,
+				normalizedPhone,
+			});
 
 			// Check if participant already exists
 			let participant = await strapi.db
 				.query("api::participant.participant")
 				.findOne({
-					where: { phone: phoneNumber },
+					where: { phone: normalizedPhone }, // CHANGED
 				});
 
-			if (participant) {
-				// Update existing participant
-				console.log("Updating existing participant:", participant.id);
-				participant = await strapi.db
-					.query("api::participant.participant")
-					.update({
-						where: { id: participant.id },
-						data: { name: name },
-					});
+			if (!participant) {
+				console.log("No participant found - new user");
+				participant = {
+					id: null,
+					phone: normalizedPhone, // CHANGED
+					name: "",
+					totalPoints: 0,
+					availablePoints: 0,
+					level: 1,
+				};
 			} else {
 				// Create new participant
 				console.log("Creating new participant");
@@ -172,7 +180,7 @@ module.exports = {
 					.query("api::participant.participant")
 					.create({
 						data: {
-							phone: phoneNumber,
+							phone: normalizedPhone, // CHANGED: use normalized
 							name: name,
 							totalPoints: 0,
 							availablePoints: 0,
@@ -191,6 +199,7 @@ module.exports = {
 					totalPoints: participant.totalPoints,
 					availablePoints: participant.availablePoints,
 					level: participant.level,
+					avatar: participant.avatar || null,
 				},
 			});
 		} catch (error) {
