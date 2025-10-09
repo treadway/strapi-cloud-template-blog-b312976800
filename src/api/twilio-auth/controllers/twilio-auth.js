@@ -130,6 +130,7 @@ module.exports = {
 					totalPoints: participant.totalPoints,
 					availablePoints: participant.availablePoints,
 					level: participant.level,
+					avatar: participant.avatar || "", // ADD THIS
 				},
 			});
 		} catch (error) {
