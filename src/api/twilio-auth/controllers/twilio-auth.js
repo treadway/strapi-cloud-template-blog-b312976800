@@ -62,20 +62,20 @@ module.exports = {
 
 			console.log("Code verified successfully");
 
-			// CHANGED: Only FIND participant, don't create yet
+			// Only FIND participant, don't create yet
 			let participant = await strapi.db
 				.query("api::participant.participant")
 				.findOne({
 					where: { phone: phoneNumber },
 				});
 
-			// If no participant exists, return minimal data with blank name
+			// If no participant exists, return minimal data
 			if (!participant) {
 				console.log("No participant found - new user");
 				participant = {
-					id: null, // Indicate this is not saved yet
+					id: null,
 					phone: phoneNumber,
-					name: "", // Blank for new users
+					name: "",
 					totalPoints: 0,
 					availablePoints: 0,
 					level: 1,
@@ -84,7 +84,6 @@ module.exports = {
 				console.log("Found existing participant:", participant.id);
 			}
 
-			// Create/find Users & Permissions user
 			const pluginStore = await strapi.store({
 				type: "plugin",
 				name: "users-permissions",
@@ -125,7 +124,7 @@ module.exports = {
 			return ctx.send({
 				jwt,
 				participant: {
-					id: participant.id, // Will be null for new participants
+					id: participant.id,
 					phone: participant.phone,
 					name: participant.name,
 					totalPoints: participant.totalPoints,
@@ -135,6 +134,66 @@ module.exports = {
 			});
 		} catch (error) {
 			console.error("Error verifying code:", error);
+			return ctx.badRequest(error.message);
+		}
+	},
+
+	createParticipant: async (ctx) => {
+		try {
+			const { name, phoneNumber } = ctx.request.body;
+
+			if (!name || !phoneNumber) {
+				return ctx.badRequest("Name and phone number are required");
+			}
+
+			console.log("Creating/updating participant:", { name, phoneNumber });
+
+			// Check if participant already exists
+			let participant = await strapi.db
+				.query("api::participant.participant")
+				.findOne({
+					where: { phone: phoneNumber },
+				});
+
+			if (participant) {
+				// Update existing participant
+				console.log("Updating existing participant:", participant.id);
+				participant = await strapi.db
+					.query("api::participant.participant")
+					.update({
+						where: { id: participant.id },
+						data: { name: name },
+					});
+			} else {
+				// Create new participant
+				console.log("Creating new participant");
+				participant = await strapi.db
+					.query("api::participant.participant")
+					.create({
+						data: {
+							phone: phoneNumber,
+							name: name,
+							totalPoints: 0,
+							availablePoints: 0,
+							level: 1,
+						},
+					});
+			}
+
+			console.log("Participant saved successfully:", participant.id);
+
+			return ctx.send({
+				participant: {
+					id: participant.id,
+					phone: participant.phone,
+					name: participant.name,
+					totalPoints: participant.totalPoints,
+					availablePoints: participant.availablePoints,
+					level: participant.level,
+				},
+			});
+		} catch (error) {
+			console.error("Error creating/updating participant:", error);
 			return ctx.badRequest(error.message);
 		}
 	},
