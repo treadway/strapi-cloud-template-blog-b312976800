@@ -16,5 +16,13 @@ module.exports = {
 				auth: false,
 			},
 		},
+		{
+			method: "POST",
+			path: "/twilio-auth/create-participant",
+			handler: "twilio-auth.createParticipant",
+			config: {
+				auth: false, // Or require auth if you prefer
+			},
+		},
 	],
 };
