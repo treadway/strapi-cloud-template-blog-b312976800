@@ -62,19 +62,17 @@ module.exports = {
 
 			console.log("Code verified successfully");
 
-			// Only FIND participant, don't create yet
 			let participant = await strapi.db
 				.query("api::participant.participant")
 				.findOne({
-					where: { phone: phoneNumber },
+					where: { phone: phoneNumber }, // Keep as-is with +
 				});
 
-			// If no participant exists, return minimal data
 			if (!participant) {
 				console.log("No participant found - new user");
 				participant = {
 					id: null,
-					phone: phoneNumber,
+					phone: phoneNumber, // Keep the +
 					name: "",
 					totalPoints: 0,
 					availablePoints: 0,
@@ -147,40 +145,30 @@ module.exports = {
 				return ctx.badRequest("Name and phone number are required");
 			}
 
-			// Normalize phone format - remove the + for storage
-			const normalizedPhone = phoneNumber.replace(/^\+/, "");
+			console.log("Creating/updating participant:", { name, phoneNumber });
 
-			console.log("Creating/updating participant:", {
-				name,
-				phoneNumber,
-				normalizedPhone,
-			});
-
-			// Check if participant already exists
+			// DON'T normalize - keep the + format
 			let participant = await strapi.db
 				.query("api::participant.participant")
 				.findOne({
-					where: { phone: normalizedPhone }, // CHANGED
+					where: { phone: phoneNumber }, // Keep as-is
 				});
 
-			if (!participant) {
-				console.log("No participant found - new user");
-				participant = {
-					id: null,
-					phone: normalizedPhone, // CHANGED
-					name: "",
-					totalPoints: 0,
-					availablePoints: 0,
-					level: 1,
-				};
+			if (participant) {
+				console.log("Updating existing participant:", participant.id);
+				participant = await strapi.db
+					.query("api::participant.participant")
+					.update({
+						where: { id: participant.id },
+						data: { name: name },
+					});
 			} else {
-				// Create new participant
-				console.log("Creating new participant");
+				console.log("Creating new participant with phone:", phoneNumber);
 				participant = await strapi.db
 					.query("api::participant.participant")
 					.create({
 						data: {
-							phone: normalizedPhone, // CHANGED: use normalized
+							phone: phoneNumber, // Keep the +
 							name: name,
 							totalPoints: 0,
 							availablePoints: 0,
@@ -189,7 +177,8 @@ module.exports = {
 					});
 			}
 
-			console.log("Participant saved successfully:", participant.id);
+			console.log("Participant saved successfully:", participant);
+			console.log("Participant ID:", participant.id);
 
 			return ctx.send({
 				participant: {
