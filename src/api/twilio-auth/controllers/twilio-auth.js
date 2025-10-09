@@ -62,29 +62,29 @@ module.exports = {
 
 			console.log("Code verified successfully");
 
+			// CHANGED: Only FIND participant, don't create yet
 			let participant = await strapi.db
 				.query("api::participant.participant")
 				.findOne({
 					where: { phone: phoneNumber },
 				});
 
+			// If no participant exists, return minimal data with blank name
 			if (!participant) {
-				console.log("Creating new participant");
-				participant = await strapi.db
-					.query("api::participant.participant")
-					.create({
-						data: {
-							phone: phoneNumber,
-							name: "",
-							totalPoints: 0,
-							availablePoints: 0,
-							level: 1,
-						},
-					});
+				console.log("No participant found - new user");
+				participant = {
+					id: null, // Indicate this is not saved yet
+					phone: phoneNumber,
+					name: "", // Blank for new users
+					totalPoints: 0,
+					availablePoints: 0,
+					level: 1,
+				};
 			} else {
 				console.log("Found existing participant:", participant.id);
 			}
 
+			// Create/find Users & Permissions user
 			const pluginStore = await strapi.store({
 				type: "plugin",
 				name: "users-permissions",
@@ -125,7 +125,7 @@ module.exports = {
 			return ctx.send({
 				jwt,
 				participant: {
-					id: participant.id,
+					id: participant.id, // Will be null for new participants
 					phone: participant.phone,
 					name: participant.name,
 					totalPoints: participant.totalPoints,
