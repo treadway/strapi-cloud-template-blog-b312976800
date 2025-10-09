@@ -75,7 +75,7 @@ module.exports = {
 					.create({
 						data: {
 							phone: phoneNumber,
-							name: "",
+							name: "New Participant",
 							totalPoints: 0,
 							availablePoints: 0,
 							level: 1,
