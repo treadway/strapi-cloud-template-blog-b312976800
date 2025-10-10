@@ -1,0 +1,14 @@
+{
+	"singularName": "business",
+	"pluralName": "businesses",
+	"displayName": "Business",
+	"fields": {
+		"businessName": "string (required)",
+		"description": "richtext",
+		"logo": "media (single image)",
+		"contactEmail": "email",
+		"contactPhone": "string",
+		"isActive": "boolean (default: true)",
+		"rewards": "relation (oneToMany with rewards)"
+	}
+}

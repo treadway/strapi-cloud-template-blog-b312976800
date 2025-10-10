@@ -1,0 +1,18 @@
+{
+	"singularName": "claimed-reward",
+	"pluralName": "claimed-rewards",
+	"displayName": "Claimed Reward",
+	"fields": {
+		"participant": "relation (manyToOne)",
+		"reward": "relation (manyToOne)",
+		"business": "relation (manyToOne)",
+		"pointsSpent": "integer",
+		"claimedAt": "datetime",
+		"expiresAt": "datetime",
+		"qrCode": "string (unique)",
+		"passUrl": "string (URL to .pkpass file)",
+		"isRedeemed": "boolean (default: false)",
+		"redeemedAt": "datetime",
+		"status": "enum: ['active', 'redeemed', 'expired']"
+	}
+}
