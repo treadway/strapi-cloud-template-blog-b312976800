@@ -1,6 +1,6 @@
 "use strict";
 const { createCoreController } = require("@strapi/strapi").factories;
-const { PassGenerator } = require("passkit-generator");
+const PKPass = require("passkit-generator").PKPass; // CHANGED
 const QRCode = require("qrcode");
 const fs = require("fs");
 const path = require("path");
@@ -8,10 +8,6 @@ const path = require("path");
 module.exports = createCoreController(
 	"api::claimed-reward.claimed-reward",
 	({ strapi }) => ({
-		async find(ctx) {
-			return super.find(ctx);
-		},
-
 		async findOne(ctx) {
 			return super.findOne(ctx);
 		},
@@ -54,7 +50,7 @@ module.exports = createCoreController(
 				console.log("🔑 QR Code:", qrData);
 
 				// Create pass
-				const pass = await PassGenerator.from(
+				const pass = await PKPass.from(
 					{
 						model: path.resolve(__dirname, "../../../passkit"),
 						certificates: {
