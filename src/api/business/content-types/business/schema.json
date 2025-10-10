@@ -25,6 +25,21 @@
 			"required": false,
 			"allowedTypes": ["images"]
 		},
+		"website": {
+			"type": "string"
+		},
+		"streetAddress": {
+			"type": "string"
+		},
+		"city": {
+			"type": "string"
+		},
+		"state": {
+			"type": "string"
+		},
+		"zipCode": {
+			"type": "string"
+		},
 		"contactEmail": {
 			"type": "email"
 		},
