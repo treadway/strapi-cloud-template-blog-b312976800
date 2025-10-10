@@ -1,3 +1,12 @@
-"use strict";
-const { createCoreRouter } = require("@strapi/strapi").factories;
-module.exports = createCoreRouter("api::claimed-reward.claimed-reward");
+module.exports = {
+	routes: [
+		{
+			method: "GET",
+			path: "/claimed-rewards/:id/pass",
+			handler: "claimed-reward.generatePass",
+			config: {
+				auth: false, // Set to true if you want authentication
+			},
+		},
+	],
+};

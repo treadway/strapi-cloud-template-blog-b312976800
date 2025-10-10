@@ -1,0 +1,22 @@
+{
+	"formatVersion": 1,
+	"passTypeIdentifier": "pass.com.points4earth",
+	"teamIdentifier": "3YWS8Q9A4A",
+	"organizationName": "Points4Earth",
+	"description": "Points4Earth Reward",
+	"logoText": "Points4Earth",
+	"foregroundColor": "rgb(255, 255, 255)",
+	"backgroundColor": "rgb(0, 122, 255)",
+	"labelColor": "rgb(255, 255, 255)",
+	"barcode": {
+		"format": "PKBarcodeFormatQR",
+		"messageEncoding": "iso-8859-1"
+	},
+	"storeCard": {
+		"headerFields": [],
+		"primaryFields": [],
+		"secondaryFields": [],
+		"auxiliaryFields": [],
+		"backFields": []
+	}
+}
