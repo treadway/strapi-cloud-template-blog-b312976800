@@ -1,18 +1,62 @@
 {
-	"singularName": "claimed-reward",
-	"pluralName": "claimed-rewards",
-	"displayName": "Claimed Reward",
-	"fields": {
-		"participant": "relation (manyToOne)",
-		"reward": "relation (manyToOne)",
-		"business": "relation (manyToOne)",
-		"pointsSpent": "integer",
-		"claimedAt": "datetime",
-		"expiresAt": "datetime",
-		"qrCode": "string (unique)",
-		"passUrl": "string (URL to .pkpass file)",
-		"isRedeemed": "boolean (default: false)",
-		"redeemedAt": "datetime",
-		"status": "enum: ['active', 'redeemed', 'expired']"
+	"kind": "collectionType",
+	"collectionName": "claimed_rewards",
+	"info": {
+		"singularName": "claimed-reward",
+		"pluralName": "claimed-rewards",
+		"displayName": "Claimed Reward",
+		"description": "Rewards claimed by participants"
+	},
+	"options": {
+		"draftAndPublish": false
+	},
+	"pluginOptions": {},
+	"attributes": {
+		"participant": {
+			"type": "relation",
+			"relation": "manyToOne",
+			"target": "api::participant.participant",
+			"inversedBy": "claimedRewards"
+		},
+		"reward": {
+			"type": "relation",
+			"relation": "manyToOne",
+			"target": "api::reward.reward"
+		},
+		"business": {
+			"type": "relation",
+			"relation": "manyToOne",
+			"target": "api::business.business"
+		},
+		"pointsSpent": {
+			"type": "integer",
+			"required": true
+		},
+		"claimedAt": {
+			"type": "datetime",
+			"required": true
+		},
+		"expiresAt": {
+			"type": "datetime"
+		},
+		"qrCode": {
+			"type": "string",
+			"unique": true
+		},
+		"passUrl": {
+			"type": "string"
+		},
+		"isRedeemed": {
+			"type": "boolean",
+			"default": false
+		},
+		"redeemedAt": {
+			"type": "datetime"
+		},
+		"status": {
+			"type": "enumeration",
+			"enum": ["active", "redeemed", "expired"],
+			"default": "active"
+		}
 	}
 }

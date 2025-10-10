@@ -1,14 +1,45 @@
 {
-	"singularName": "business",
-	"pluralName": "businesses",
-	"displayName": "Business",
-	"fields": {
-		"businessName": "string (required)",
-		"description": "richtext",
-		"logo": "media (single image)",
-		"contactEmail": "email",
-		"contactPhone": "string",
-		"isActive": "boolean (default: true)",
-		"rewards": "relation (oneToMany with rewards)"
+	"kind": "collectionType",
+	"collectionName": "businesses",
+	"info": {
+		"singularName": "business",
+		"pluralName": "businesses",
+		"displayName": "Business",
+		"description": "Reward creator businesses"
+	},
+	"options": {
+		"draftAndPublish": false
+	},
+	"pluginOptions": {},
+	"attributes": {
+		"businessName": {
+			"type": "string",
+			"required": true
+		},
+		"description": {
+			"type": "richtext"
+		},
+		"logo": {
+			"type": "media",
+			"multiple": false,
+			"required": false,
+			"allowedTypes": ["images"]
+		},
+		"contactEmail": {
+			"type": "email"
+		},
+		"contactPhone": {
+			"type": "string"
+		},
+		"isActive": {
+			"type": "boolean",
+			"default": true
+		},
+		"rewards": {
+			"type": "relation",
+			"relation": "oneToMany",
+			"target": "api::reward.reward",
+			"mappedBy": "business"
+		}
 	}
 }

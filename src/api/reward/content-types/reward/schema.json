@@ -10,10 +10,6 @@
 	"options": {
 		"draftAndPublish": true
 	},
-	"business": "relation (manyToOne to business)",
-	"expirationDays": "integer (default: 30)",
-	"termsConditions": "richtext",
-	"redemptionInstructions": "text",
 	"attributes": {
 		"title": {
 			"type": "string",
@@ -71,6 +67,22 @@
 			"relation": "oneToMany",
 			"target": "api::point-transaction.point-transaction",
 			"mappedBy": "relatedReward"
+		},
+		"business": {
+			"type": "relation",
+			"relation": "manyToOne",
+			"target": "api::business.business",
+			"inversedBy": "rewards"
+		},
+		"expirationDays": {
+			"type": "integer",
+			"default": 30
+		},
+		"termsConditions": {
+			"type": "richtext"
+		},
+		"redemptionInstructions": {
+			"type": "text"
 		}
 	}
 }

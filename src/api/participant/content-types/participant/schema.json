@@ -56,6 +56,12 @@
 			"relation": "oneToMany",
 			"target": "api::point-transaction.point-transaction",
 			"mappedBy": "participant"
+		},
+		"claimedRewards": {
+			"type": "relation",
+			"relation": "oneToMany",
+			"target": "api::claimed-reward.claimed-reward",
+			"mappedBy": "participant"
 		}
 	}
 }
