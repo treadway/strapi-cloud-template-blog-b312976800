@@ -58,7 +58,7 @@ module.exports = createCoreController(
 				// Create pass
 				const pass = await PKPass.from(
 					{
-						model: path.resolve(__dirname, "../../../passkit"),
+						model: path.resolve(__dirname, "../../../passkit.pass"), // Added .pass
 						certificates: {
 							wwdr: wwdrCert,
 							signerCert: signerCert,
