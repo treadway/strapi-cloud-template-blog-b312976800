@@ -30,14 +30,7 @@ module.exports = createCoreController(
 					return ctx.notFound("Claimed reward not found");
 				}
 
-				console.log("📦 Claimed reward data:", {
-					id: claimedReward.id,
-					reward: claimedReward.reward?.title,
-					business: claimedReward.business?.businessName,
-					participant: claimedReward.participant?.name,
-				});
-
-				// Generate unique QR code if not exists
+				// Generate QR code if needed
 				let qrData = claimedReward.qrCode;
 				if (!qrData) {
 					qrData = `P4E-${claimedReward.id}-${Date.now()}`;
@@ -47,22 +40,29 @@ module.exports = createCoreController(
 					});
 				}
 
-				console.log("🔑 QR Code:", qrData);
+				// Decode certificates from environment variables
+				const wwdrCert = Buffer.from(process.env.WWDR_CERT, "base64").toString(
+					"utf-8"
+				);
+				const signerCert = Buffer.from(
+					process.env.SIGNER_CERT,
+					"base64"
+				).toString("utf-8");
+				const signerKey = Buffer.from(
+					process.env.SIGNER_KEY,
+					"base64"
+				).toString("utf-8");
+
+				console.log("🔐 Certificates loaded from environment");
 
 				// Create pass
 				const pass = await PKPass.from(
 					{
 						model: path.resolve(__dirname, "../../../passkit"),
 						certificates: {
-							wwdr: fs.readFileSync(
-								path.resolve(__dirname, "../../../certs/WWDR.pem")
-							),
-							signerCert: fs.readFileSync(
-								path.resolve(__dirname, "../../../certs/signerCert.pem")
-							),
-							signerKey: fs.readFileSync(
-								path.resolve(__dirname, "../../../certs/signerKey.pem")
-							),
+							wwdr: wwdrCert,
+							signerCert: signerCert,
+							signerKey: signerKey,
 							signerKeyPassphrase: process.env.PASS_SIGNER_PASSPHRASE,
 						},
 					},
@@ -71,7 +71,6 @@ module.exports = createCoreController(
 						description: claimedReward.reward.title,
 					}
 				);
-
 				console.log("✅ Pass created");
 
 				// Add pass data
