@@ -136,10 +136,7 @@ module.exports = createCoreController(
 
 				// Set response headers for download
 				ctx.set("Content-Type", "application/vnd.apple.pkpass");
-				ctx.set(
-					"Content-Disposition",
-					`attachment; filename="reward-${claimedReward.id}.pkpass"`
-				);
+				ctx.set("Content-Disposition", "inline; filename=reward.pkpass");
 
 				return passBuffer;
 			} catch (error) {
