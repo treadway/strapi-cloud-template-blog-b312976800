@@ -5,31 +5,31 @@ module.exports = {
 			method: "GET",
 			path: "/claimed-rewards",
 			handler: "claimed-reward.find",
-			config: { auth: true },
+			auth: false,
 		},
 		{
 			method: "GET",
 			path: "/claimed-rewards/:id",
 			handler: "claimed-reward.findOne",
-			config: { auth: true },
+			auth: false,
 		},
 		{
 			method: "POST",
 			path: "/claimed-rewards",
 			handler: "claimed-reward.create",
-			config: { auth: true },
+			auth: false,
 		},
 		{
 			method: "PUT",
 			path: "/claimed-rewards/:id",
 			handler: "claimed-reward.update",
-			config: { auth: true },
+			auth: false,
 		},
 		{
 			method: "DELETE",
 			path: "/claimed-rewards/:id",
 			handler: "claimed-reward.delete",
-			config: { auth: true },
+			auth: false,
 		},
 
 		// ✅ Your custom pass generator
