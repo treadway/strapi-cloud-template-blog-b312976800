@@ -27,6 +27,7 @@
 			"type": "relation",
 			"relation": "manyToOne",
 			"target": "api::business.business"
+			"required": false
 		},
 		"pointsSpent": {
 			"type": "integer",
