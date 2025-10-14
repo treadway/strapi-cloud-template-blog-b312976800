@@ -38,26 +38,21 @@
 			"required": true
 		},
 		"expiresAt": {
-			"type": "datetime",
-			"required": false
+			"type": "datetime"
 		},
 		"qrCode": {
 			"type": "string",
-			"unique": true,
-			"required": false
+			"unique": true
 		},
 		"passUrl": {
-			"type": "string",
-			"required": false
+			"type": "string"
 		},
 		"isRedeemed": {
 			"type": "boolean",
-			"default": false,
-			"required": false
+			"default": false
 		},
 		"redeemedAt": {
-			"type": "datetime",
-			"required": false
+			"type": "datetime"
 		},
 		"status": {
 			"type": "enumeration",
