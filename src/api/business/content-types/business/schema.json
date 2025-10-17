@@ -16,6 +16,10 @@
 			"type": "string",
 			"required": true
 		},
+		"ownerEmail": {
+			"type": "email",
+			"required": false
+		},
 		"description": {
 			"type": "richtext"
 		},
