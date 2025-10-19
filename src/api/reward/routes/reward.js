@@ -11,7 +11,8 @@ module.exports = {
 			path: "/rewards",
 			handler: "reward.find",
 			config: {
-				policies: ["global::isBusinessOwner"],
+				// ✅ NO POLICY - anyone can view rewards
+				auth: false,
 			},
 		},
 		{
@@ -19,7 +20,8 @@ module.exports = {
 			path: "/rewards/:id",
 			handler: "reward.findOne",
 			config: {
-				policies: ["global::isBusinessOwner"],
+				// ✅ NO POLICY - anyone can view a single reward
+				auth: false,
 			},
 		},
 		{
@@ -27,7 +29,7 @@ module.exports = {
 			path: "/rewards",
 			handler: "reward.create",
 			config: {
-				policies: ["global::isBusinessOwner"],
+				policies: ["global::isBusinessOwner"], // ✅ KEEP POLICY for create
 			},
 		},
 		{
@@ -35,7 +37,7 @@ module.exports = {
 			path: "/rewards/:id",
 			handler: "reward.update",
 			config: {
-				policies: ["global::isBusinessOwner"],
+				policies: ["global::isBusinessOwner"], // ✅ KEEP POLICY for update
 			},
 		},
 		{
@@ -43,7 +45,7 @@ module.exports = {
 			path: "/rewards/:id",
 			handler: "reward.delete",
 			config: {
-				policies: ["global::isBusinessOwner"],
+				policies: ["global::isBusinessOwner"], // ✅ KEEP POLICY for delete
 			},
 		},
 	],
