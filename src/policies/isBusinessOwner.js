@@ -1,39 +1,43 @@
 module.exports = async (policyContext, config, { strapi }) => {
 	const { user } = policyContext.state;
+	const { id } = policyContext.params;
 
-	if (!user) {
-		return false;
-	}
+	if (!user) return false;
 
-	// Admin can see everything
-	if (user.role.type === "authenticated") {
-		return true;
-	}
+	// Super Admin sees everything
+	if (user.role.type === "super_admin") return true;
 
-	// Business owner - find business by their email
+	// Business Owner - filter by owner relation
 	if (user.role.name === "Business Owner") {
-		const businesses = await strapi.entityService.findMany(
-			"api::business.business",
-			{
-				filters: { ownerEmail: user.email },
-				fields: ["id"],
-			}
-		);
-
-		if (businesses.length === 0) {
-			return false; // No business found for this user
+		// For GET /businesses - filter to only show their businesses
+		if (!id && policyContext.request.method === "GET") {
+			policyContext.query = {
+				...policyContext.query,
+				filters: {
+					...policyContext.query?.filters,
+					owner: { id: user.id },
+				},
+			};
+			return true;
 		}
 
-		// Filter to only show rewards from their business
-		const businessId = businesses[0].id;
-		policyContext.query = {
-			...policyContext.query,
-			filters: {
-				...policyContext.query.filters,
-				business: businessId,
-			},
-		};
-		return true;
+		// For POST /businesses - will set owner in controller (see next step)
+		if (policyContext.request.method === "POST") {
+			return true;
+		}
+
+		// For GET/PUT/DELETE specific business - check they own it
+		if (id) {
+			const business = await strapi.entityService.findOne(
+				"api::business.business",
+				id,
+				{
+					populate: { owner: { fields: ["id"] } },
+				}
+			);
+
+			return business?.owner?.id === user.id;
+		}
 	}
 
 	return false;

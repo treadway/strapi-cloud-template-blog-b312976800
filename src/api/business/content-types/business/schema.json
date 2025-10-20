@@ -10,6 +10,11 @@
 	"options": {
 		"draftAndPublish": false
 	},
+	"owner": {
+		"type": "relation",
+		"relation": "manyToOne",
+		"target": "plugin::users-permissions.user"
+	},
 	"pluginOptions": {},
 	"attributes": {
 		"businessName": {

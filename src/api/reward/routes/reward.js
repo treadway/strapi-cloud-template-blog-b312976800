@@ -1,9 +1,5 @@
 "use strict";
 
-/**
- * reward router with business owner policy
- */
-
 module.exports = {
 	routes: [
 		{
@@ -11,8 +7,7 @@ module.exports = {
 			path: "/rewards",
 			handler: "reward.find",
 			config: {
-				// ✅ NO POLICY - anyone can view rewards
-				auth: false,
+				policies: ["global::isBusinessOwner"],
 			},
 		},
 		{
@@ -20,8 +15,7 @@ module.exports = {
 			path: "/rewards/:id",
 			handler: "reward.findOne",
 			config: {
-				// ✅ NO POLICY - anyone can view a single reward
-				auth: false,
+				policies: ["global::isBusinessOwner"],
 			},
 		},
 		{
@@ -29,7 +23,7 @@ module.exports = {
 			path: "/rewards",
 			handler: "reward.create",
 			config: {
-				policies: ["global::isBusinessOwner"], // ✅ KEEP POLICY for create
+				policies: ["global::isBusinessOwner"],
 			},
 		},
 		{
@@ -37,7 +31,7 @@ module.exports = {
 			path: "/rewards/:id",
 			handler: "reward.update",
 			config: {
-				policies: ["global::isBusinessOwner"], // ✅ KEEP POLICY for update
+				policies: ["global::isBusinessOwner"],
 			},
 		},
 		{
@@ -45,7 +39,7 @@ module.exports = {
 			path: "/rewards/:id",
 			handler: "reward.delete",
 			config: {
-				policies: ["global::isBusinessOwner"], // ✅ KEEP POLICY for delete
+				policies: ["global::isBusinessOwner"],
 			},
 		},
 	],
