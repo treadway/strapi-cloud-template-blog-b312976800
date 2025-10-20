@@ -7,7 +7,7 @@ module.exports = {
 			path: "/rewards",
 			handler: "reward.find",
 			config: {
-				policies: ["global::isBusinessOwner"],
+				auth: false, // ✅ PUBLIC - app can read
 			},
 		},
 		{
@@ -15,7 +15,7 @@ module.exports = {
 			path: "/rewards/:id",
 			handler: "reward.findOne",
 			config: {
-				policies: ["global::isBusinessOwner"],
+				auth: false, // ✅ PUBLIC - app can read
 			},
 		},
 		{
@@ -23,7 +23,7 @@ module.exports = {
 			path: "/rewards",
 			handler: "reward.create",
 			config: {
-				policies: ["global::isBusinessOwner"],
+				policies: ["global::isRewardOwner"],
 			},
 		},
 		{
@@ -31,7 +31,7 @@ module.exports = {
 			path: "/rewards/:id",
 			handler: "reward.update",
 			config: {
-				policies: ["global::isBusinessOwner"],
+				policies: ["global::isRewardOwner"],
 			},
 		},
 		{
@@ -39,7 +39,7 @@ module.exports = {
 			path: "/rewards/:id",
 			handler: "reward.delete",
 			config: {
-				policies: ["global::isBusinessOwner"],
+				policies: ["global::isRewardOwner"],
 			},
 		},
 	],

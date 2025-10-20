@@ -1,42 +1,36 @@
+"use strict";
+
 module.exports = async (policyContext, config, { strapi }) => {
 	const { user } = policyContext.state;
 	const { id } = policyContext.params;
 
 	if (!user) return false;
 
-	// Super Admin sees everything
+	// Super Admin can do everything
 	if (user.role.type === "super_admin") return true;
 
-	// Business Owner - filter by owner relation
+	// Business Owner - filter by ownerEmail
 	if (user.role.name === "Business Owner") {
-		// For GET /businesses - filter to only show their businesses
+		// GET /businesses - filter to their email
 		if (!id && policyContext.request.method === "GET") {
 			policyContext.query = {
 				...policyContext.query,
 				filters: {
 					...policyContext.query?.filters,
-					owner: { id: user.id },
+					ownerEmail: user.email,
 				},
 			};
 			return true;
 		}
 
-		// For POST /businesses - will set owner in controller (see next step)
-		if (policyContext.request.method === "POST") {
-			return true;
-		}
-
-		// For GET/PUT/DELETE specific business - check they own it
+		// GET/PUT specific business - check ownerEmail matches
 		if (id) {
 			const business = await strapi.entityService.findOne(
 				"api::business.business",
 				id,
-				{
-					populate: { owner: { fields: ["id"] } },
-				}
+				{ fields: ["ownerEmail"] }
 			);
-
-			return business?.owner?.id === user.id;
+			return business?.ownerEmail === user.email;
 		}
 	}
 

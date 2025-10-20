@@ -7,7 +7,7 @@ module.exports = {
 			path: "/businesses",
 			handler: "business.find",
 			config: {
-				policies: ["global::isBusinessOwner"],
+				policies: ["global::isBusinessEmailOwner"],
 			},
 		},
 		{
@@ -15,15 +15,7 @@ module.exports = {
 			path: "/businesses/:id",
 			handler: "business.findOne",
 			config: {
-				policies: ["global::isBusinessOwner"],
-			},
-		},
-		{
-			method: "POST",
-			path: "/businesses",
-			handler: "business.create",
-			config: {
-				policies: ["global::isBusinessOwner"],
+				policies: ["global::isBusinessEmailOwner"],
 			},
 		},
 		{
@@ -31,16 +23,10 @@ module.exports = {
 			path: "/businesses/:id",
 			handler: "business.update",
 			config: {
-				policies: ["global::isBusinessOwner"],
+				policies: ["global::isBusinessEmailOwner"],
 			},
 		},
-		{
-			method: "DELETE",
-			path: "/businesses/:id",
-			handler: "business.delete",
-			config: {
-				policies: ["global::isBusinessOwner"],
-			},
-		},
+		// ✅ NO POST - business owner doesn't create business
+		// ✅ NO DELETE - business owner can't delete their business
 	],
 };
