@@ -11,7 +11,7 @@ module.exports = async (policyContext, config, { strapi }) => {
 
 	// Business Owner
 	if (user.role.name === "Business Owner") {
-		// POST - creating reward (owner will be set in controller)
+		// POST - creating reward
 		if (policyContext.request.method === "POST") {
 			return true;
 		}
