@@ -2,6 +2,14 @@ module.exports = [
 	"strapi::logger",
 	"strapi::errors",
 	{
+		name: "strapi::cors",
+		config: {
+			enabled: true,
+			origin: ["http://localhost:8081", "exp://", "*"],
+			credentials: true,
+		},
+	},
+	{
 		name: "strapi::security",
 		config: {
 			contentSecurityPolicy: {
@@ -13,15 +21,6 @@ module.exports = [
 					upgradeInsecureRequests: null,
 				},
 			},
-		},
-	},
-	{
-		name: "strapi::cors",
-		config: {
-			enabled: true,
-			origin: ["*"],
-			headers: ["Content-Type", "Authorization", "Origin", "Accept"],
-			methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 		},
 	},
 	"strapi::poweredBy",
