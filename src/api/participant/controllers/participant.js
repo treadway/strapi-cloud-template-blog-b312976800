@@ -11,24 +11,31 @@ module.exports = createCoreController(
 		// Custom method to check if phone exists (public access)
 		async checkPhone(ctx) {
 			const { phone } = ctx.params;
+			console.log("🔍 Controller received phone:", phone);
 
 			try {
-				// Only return whether participant exists, not the data
 				const participants = await strapi.entityService.findMany(
 					"api::participant.participant",
 					{
 						filters: { phone },
-						fields: ["id", "name"], // Only need to know if exists and has name
-						publicationState: "live", // Only published
+						fields: ["id", "name"],
+						publicationState: "live",
 					}
+				);
+
+				console.log(
+					"📊 Found participants:",
+					participants.length,
+					participants
 				);
 
 				const exists = participants.length > 0 && participants[0].name !== "";
 
-				return {
-					exists,
-				};
+				console.log("✅ Returning exists:", exists);
+
+				return { exists };
 			} catch (error) {
+				console.error("❌ Error in checkPhone:", error);
 				ctx.throw(500, "Failed to check phone");
 			}
 		},
