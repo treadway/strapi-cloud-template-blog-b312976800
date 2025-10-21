@@ -29,7 +29,8 @@ module.exports = createCoreController(
 					participants
 				);
 
-				const exists = participants.length > 0 && participants[0].name !== "";
+				// ✅ JUST CHECK IF THEY EXIST - don't check name
+				const exists = participants.length > 0;
 
 				console.log("✅ Returning exists:", exists);
 
