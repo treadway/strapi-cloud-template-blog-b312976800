@@ -141,8 +141,8 @@ module.exports = {
 		try {
 			const { name, phoneNumber } = ctx.request.body;
 
-			if (!name || !phoneNumber) {
-				return ctx.badRequest("Name and phone number are required");
+			if (!phoneNumber) {
+				return ctx.badRequest("Phone number is required");
 			}
 
 			console.log("Creating/updating participant:", { name, phoneNumber });
@@ -160,7 +160,7 @@ module.exports = {
 					.query("api::participant.participant")
 					.update({
 						where: { id: participant.id },
-						data: { name: name },
+						data: { name: name || "" }, // Allow empty name
 					});
 			} else {
 				console.log("Creating new participant with phone:", phoneNumber);
@@ -169,7 +169,7 @@ module.exports = {
 					.create({
 						data: {
 							phone: phoneNumber, // Keep the +
-							name: name,
+							name: name || "", // Allow empty name
 							totalPoints: 0,
 							availablePoints: 0,
 							level: 1,
