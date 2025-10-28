@@ -1,6 +1,6 @@
 "use strict";
 const { createCoreController } = require("@strapi/strapi").factories;
-const PKPass = require("passkit-generator").PKPass; // CHANGED
+const PKPass = require("passkit-generator").PKPass;
 const QRCode = require("qrcode");
 const fs = require("fs");
 const path = require("path");
@@ -15,8 +15,10 @@ module.exports = createCoreController(
 		async generatePass(ctx) {
 			try {
 				const { id } = ctx.params;
+				const user = ctx.state.user; // Get authenticated user
 
 				console.log("🎫 Generating pass for claimed reward:", id);
+				console.log("👤 Authenticated user:", user?.id);
 
 				// Get claimed reward with all relations
 				const claimedReward = await strapi.db
@@ -27,8 +29,29 @@ module.exports = createCoreController(
 					});
 
 				if (!claimedReward) {
+					console.log("❌ Claimed reward not found");
 					return ctx.notFound("Claimed reward not found");
 				}
+
+				// SECURITY: Verify user owns this claimed reward
+				// Match user ID with participant phone
+				const userPhone = user?.username || user?.phone;
+				const participantPhone = claimedReward.participant?.phone;
+
+				console.log("🔐 Security check:", {
+					userPhone,
+					participantPhone,
+					match: userPhone === participantPhone,
+				});
+
+				if (userPhone !== participantPhone) {
+					console.log("❌ Unauthorized access attempt");
+					return ctx.forbidden(
+						"You don't have permission to access this reward"
+					);
+				}
+
+				console.log("✅ Authorization verified");
 
 				// Generate QR code if needed
 				let qrData = claimedReward.qrCode;
@@ -58,7 +81,7 @@ module.exports = createCoreController(
 				// Create pass
 				const pass = await PKPass.from(
 					{
-						model: path.resolve(__dirname, "../../../passkit.pass"), // Added .pass
+						model: path.resolve(__dirname, "../../../passkit.pass"),
 						certificates: {
 							wwdr: wwdrCert,
 							signerCert: signerCert,

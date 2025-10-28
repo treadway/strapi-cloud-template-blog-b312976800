@@ -1,43 +1,57 @@
 module.exports = {
 	routes: [
-		// ✅ Default CRUD routes
+		// ✅ Default CRUD routes - require authentication
 		{
 			method: "GET",
 			path: "/claimed-rewards",
 			handler: "claimed-reward.find",
-			auth: false,
+			config: {
+				policies: [],
+			},
 		},
 		{
 			method: "GET",
 			path: "/claimed-rewards/:id",
 			handler: "claimed-reward.findOne",
-			auth: false,
+			config: {
+				policies: [],
+			},
 		},
 		{
 			method: "POST",
 			path: "/claimed-rewards",
 			handler: "claimed-reward.create",
-			auth: false,
+			config: {
+				policies: [],
+			},
 		},
 		{
 			method: "PUT",
 			path: "/claimed-rewards/:id",
 			handler: "claimed-reward.update",
-			auth: false,
+			config: {
+				policies: [],
+			},
 		},
 		{
 			method: "DELETE",
 			path: "/claimed-rewards/:id",
 			handler: "claimed-reward.delete",
-			auth: false,
+			config: {
+				policies: [],
+			},
 		},
 
-		// ✅ Your custom pass generator
+		// ✅ Custom pass generator - AUTHENTICATED
 		{
 			method: "GET",
 			path: "/claimed-rewards/:id/pass",
 			handler: "claimed-reward.generatePass",
-			auth: false,
+			config: {
+				policies: [],
+				// This will use default authentication
+				// User must be logged in to generate pass
+			},
 		},
 	],
 };
