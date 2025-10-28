@@ -42,15 +42,14 @@ module.exports = {
 			},
 		},
 
-		// ✅ Custom pass generator - AUTHENTICATED
+		// ✅ Custom pass generator - PUBLIC but with ownership check in controller
 		{
 			method: "GET",
 			path: "/claimed-rewards/:id/pass",
 			handler: "claimed-reward.generatePass",
 			config: {
+				auth: false, // Public route
 				policies: [],
-				// This will use default authentication
-				// User must be logged in to generate pass
 			},
 		},
 	],

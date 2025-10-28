@@ -15,10 +15,38 @@ module.exports = createCoreController(
 		async generatePass(ctx) {
 			try {
 				const { id } = ctx.params;
-				const user = ctx.state.user; // Get authenticated user
+				const queryToken = ctx.query.access_token;
 
 				console.log("🎫 Generating pass for claimed reward:", id);
-				console.log("👤 Authenticated user:", user?.id);
+
+				// Verify token from query parameter
+				let user = null;
+				if (queryToken) {
+					try {
+						// Decode and verify JWT token
+						const decoded = await strapi.plugins[
+							"users-permissions"
+						].services.jwt.verify(queryToken);
+						user = await strapi
+							.query("plugin::users-permissions.user")
+							.findOne({
+								where: { id: decoded.id },
+							});
+						console.log("👤 Authenticated user from query token:", user?.id);
+					} catch (err) {
+						console.log("❌ Invalid token:", err.message);
+						return ctx.unauthorized("Invalid or expired token");
+					}
+				} else {
+					// Try standard authentication
+					user = ctx.state.user;
+					console.log("👤 Authenticated user from header:", user?.id);
+				}
+
+				if (!user) {
+					console.log("❌ No authentication provided");
+					return ctx.unauthorized("Authentication required");
+				}
 
 				// Get claimed reward with all relations
 				const claimedReward = await strapi.db
