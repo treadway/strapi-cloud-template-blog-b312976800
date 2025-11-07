@@ -119,7 +119,7 @@ module.exports = createCoreController(
 					},
 					{
 						serialNumber: `P4E-${claimedReward.id}`,
-						description: claimedReward.reward.title,
+						description: claimedReward.reward?.title || "Points4Earth Reward",
 					}
 				);
 				console.log("✅ Pass created");
@@ -133,71 +133,97 @@ module.exports = createCoreController(
 
 				// ==================================================
 				// POPULATE PASS FIELDS WITH REWARD DATA
+				// Using proper passkit-generator methods
 				// ==================================================
 
-				// HEADER FIELD - Business name
-				pass.headerFields.push({
+				// HEADER FIELD - Business name (if available)
+				const businessName =
+					claimedReward.business?.businessName || "Points4Earth";
+				pass.addHeaderField({
 					key: "business",
-					label: "", // No label for cleaner header
-					value: claimedReward.business?.businessName || "Points4Earth Partner",
+					label: "",
+					value: businessName,
 				});
 
 				// PRIMARY FIELD - The reward title (main focus)
-				pass.primaryFields.push({
+				const rewardTitle = claimedReward.reward?.title || "Reward";
+				pass.addPrimaryField({
 					key: "reward",
-					label: "", // No label - let the title be prominent
-					value: claimedReward.reward.title || "Reward",
+					label: "",
+					value: rewardTitle,
 				});
 
-				// SECONDARY FIELDS - Appreciation message and context
-				const businessName =
-					claimedReward.business?.businessName || claimedReward.reward.title;
-				pass.secondaryFields.push({
-					key: "message",
-					label: "FROM",
-					value: `${businessName} appreciates your hard work!`,
-					textAlignment: "PKTextAlignmentLeft",
-				});
+				// SECONDARY FIELD - Appreciation message (if business exists)
+				if (claimedReward.business || claimedReward.reward?.title) {
+					const fromName = claimedReward.business?.businessName || rewardTitle;
+					pass.addSecondaryField({
+						key: "message",
+						label: "FROM",
+						value: `${fromName} appreciates your hard work!`,
+						textAlignment: "PKTextAlignmentLeft",
+					});
+				}
 
-				// AUXILIARY FIELDS - Important details in two columns
-				// Left: Expiration date
-				pass.auxiliaryFields.push({
-					key: "expires",
-					label: "EXPIRES",
-					value: new Date(claimedReward.expiresAt).toLocaleDateString("en-US", {
-						month: "short",
-						day: "numeric",
-						year: "numeric",
-					}),
-					textAlignment: "PKTextAlignmentLeft",
-				});
+				// AUXILIARY FIELDS - Details in two columns
+				// Left: Expiration date (if available)
+				if (claimedReward.expiresAt) {
+					pass.addAuxiliaryField({
+						key: "expires",
+						label: "EXPIRES",
+						value: new Date(claimedReward.expiresAt).toLocaleDateString(
+							"en-US",
+							{
+								month: "short",
+								day: "numeric",
+								year: "numeric",
+							}
+						),
+						textAlignment: "PKTextAlignmentLeft",
+					});
+				}
 
-				// Right: Points redeemed
-				pass.auxiliaryFields.push({
-					key: "points",
-					label: "POINTS REDEEMED",
-					value: `${claimedReward.pointsSpent}`,
-					textAlignment: "PKTextAlignmentRight",
-				});
+				// Right: Points redeemed (if available)
+				if (
+					claimedReward.pointsSpent !== undefined &&
+					claimedReward.pointsSpent !== null
+				) {
+					pass.addAuxiliaryField({
+						key: "points",
+						label: "POINTS REDEEMED",
+						value: `${claimedReward.pointsSpent}`,
+						textAlignment: "PKTextAlignmentRight",
+					});
+				}
 
 				// BACK FIELDS - Terms, instructions, about
-				if (claimedReward.reward.termsConditions) {
-					pass.backFields.push({
+
+				// Terms & Conditions (if available)
+				if (claimedReward.reward?.termsConditions) {
+					pass.addBackField({
 						key: "terms",
 						label: "Terms & Conditions",
 						value: claimedReward.reward.termsConditions,
 					});
 				}
 
-				if (claimedReward.reward.redemptionInstructions) {
-					pass.backFields.push({
+				// Redemption Instructions (if available)
+				if (claimedReward.reward?.redemptionInstructions) {
+					pass.addBackField({
 						key: "instructions",
 						label: "How to Redeem",
 						value: claimedReward.reward.redemptionInstructions,
 					});
+				} else {
+					// Default instructions
+					pass.addBackField({
+						key: "instructions",
+						label: "How to Redeem",
+						value:
+							"Show this pass to staff at checkout. QR code must be scanned to validate.",
+					});
 				}
 
-				// Add business contact info if available
+				// Business Contact Info (if available)
 				if (
 					claimedReward.business?.contactEmail ||
 					claimedReward.business?.contactPhone
@@ -210,7 +236,7 @@ module.exports = createCoreController(
 						contactInfo.push(`Email: ${claimedReward.business.contactEmail}`);
 					}
 
-					pass.backFields.push({
+					pass.addBackField({
 						key: "contact",
 						label: "Business Contact",
 						value: contactInfo.join("\n"),
@@ -218,12 +244,51 @@ module.exports = createCoreController(
 				}
 
 				// About Points4Earth
-				pass.backFields.push({
+				pass.addBackField({
 					key: "about",
 					label: "About Points4Earth",
 					value:
 						"Rewards for doing good things! Earn points for eco-friendly travel and redeem for great rewards. Learn more at points4earth.com",
 				});
+
+				// ==================================================
+				// ADD BUSINESS LOGO AS THUMBNAIL (if available)
+				// ==================================================
+
+				// Check if business has a logo
+				if (claimedReward.business?.logo?.url) {
+					try {
+						// Fetch the business logo
+						const logoUrl = claimedReward.business.logo.url;
+						const fullLogoUrl = logoUrl.startsWith("http")
+							? logoUrl
+							: `${
+									process.env.STRAPI_URL ||
+									"https://lovely-charity-e91f9ec79a.strapiapp.com"
+							  }${logoUrl}`;
+
+						console.log("🖼️ Fetching business logo:", fullLogoUrl);
+
+						const fetch = (await import("node-fetch")).default;
+						const logoResponse = await fetch(fullLogoUrl);
+
+						if (logoResponse.ok) {
+							const logoBuffer = await logoResponse.buffer();
+							// Add as thumbnail image to the pass
+							pass.addBuffer("thumbnail.png", logoBuffer);
+							pass.addBuffer("thumbnail@2x.png", logoBuffer);
+							console.log("✅ Business logo added to pass");
+						} else {
+							console.log(
+								"⚠️ Could not fetch business logo:",
+								logoResponse.status
+							);
+						}
+					} catch (logoError) {
+						console.log("⚠️ Error adding business logo:", logoError.message);
+						// Continue without logo - don't fail the whole pass generation
+					}
+				}
 
 				console.log("📊 Pass fields configured");
 
