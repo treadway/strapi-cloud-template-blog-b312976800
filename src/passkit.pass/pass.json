@@ -4,7 +4,6 @@
 	"teamIdentifier": "3YWS8Q9A4A",
 	"organizationName": "Points4Earth",
 	"description": "Points4Earth Reward",
-	"logoText": "",
 	"foregroundColor": "rgb(255, 255, 255)",
 	"backgroundColor": "rgb(0, 200, 83)",
 	"labelColor": "rgba(255, 255, 255, 0.85)",
@@ -13,10 +12,63 @@
 		"messageEncoding": "iso-8859-1"
 	},
 	"storeCard": {
-		"headerFields": [],
-		"primaryFields": [],
-		"secondaryFields": [],
-		"auxiliaryFields": [],
-		"backFields": []
+		"headerFields": [
+			{
+				"key": "business",
+				"label": "",
+				"value": ""
+			}
+		],
+		"primaryFields": [
+			{
+				"key": "reward",
+				"label": "",
+				"value": ""
+			}
+		],
+		"secondaryFields": [
+			{
+				"key": "message",
+				"label": "FROM",
+				"value": "",
+				"textAlignment": "PKTextAlignmentLeft"
+			}
+		],
+		"auxiliaryFields": [
+			{
+				"key": "expires",
+				"label": "EXPIRES",
+				"value": "",
+				"textAlignment": "PKTextAlignmentLeft"
+			},
+			{
+				"key": "points",
+				"label": "POINTS REDEEMED",
+				"value": "",
+				"textAlignment": "PKTextAlignmentRight"
+			}
+		],
+		"backFields": [
+			{
+				"key": "terms",
+				"label": "Terms & Conditions",
+				"value": ""
+			},
+			{
+				"key": "instructions",
+				"label": "How to Redeem",
+				"value": ""
+			},
+			{
+				"key": "contact",
+				"label": "Business Contact",
+				"value": ""
+			},
+			{
+				"key": "about",
+				"label": "About Points4Earth",
+				"value": "Rewards for doing good things! Earn points for eco-friendly travel and redeem for great rewards."
+			}
+		]
 	}
 }
