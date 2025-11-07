@@ -119,7 +119,7 @@ module.exports = createCoreController(
 					},
 					{
 						serialNumber: `P4E-${claimedReward.id}`,
-						description: claimedReward.reward?.title || "Points4Earth Reward",
+						description: claimedReward.reward.title,
 					}
 				);
 				console.log("✅ Pass created");
@@ -131,123 +131,7 @@ module.exports = createCoreController(
 					messageEncoding: "iso-8859-1",
 				});
 
-				// ==================================================
-				// UPDATE PASS FIELDS WITH REWARD DATA
-				// Fields are pre-defined in pass.json, we just update values
-				// ==================================================
-
-				// Get business and reward info with fallbacks
-				const businessName =
-					claimedReward.business?.businessName || "Points4Earth";
-				const rewardTitle = claimedReward.reward?.title || "Reward";
-				const fromName = claimedReward.business?.businessName || rewardTitle;
-
-				// Header: Business name
-				pass.headerFields[0].value = businessName;
-
-				// Primary: Reward title
-				pass.primaryFields[0].value = rewardTitle;
-
-				// Secondary: Appreciation message
-				pass.secondaryFields[0].value = `${fromName} appreciates your hard work!`;
-
-				// Auxiliary Left: Expiration date
-				if (claimedReward.expiresAt) {
-					pass.auxiliaryFields[0].value = new Date(
-						claimedReward.expiresAt
-					).toLocaleDateString("en-US", {
-						month: "short",
-						day: "numeric",
-						year: "numeric",
-					});
-				} else {
-					pass.auxiliaryFields[0].value = "No expiration";
-				}
-
-				// Auxiliary Right: Points redeemed
-				if (
-					claimedReward.pointsSpent !== undefined &&
-					claimedReward.pointsSpent !== null
-				) {
-					pass.auxiliaryFields[1].value = `${claimedReward.pointsSpent}`;
-				} else {
-					pass.auxiliaryFields[1].value = "0";
-				}
-
-				// Back Fields
-				// Terms & Conditions
-				if (claimedReward.reward?.termsConditions) {
-					pass.backFields[0].value = claimedReward.reward.termsConditions;
-				} else {
-					pass.backFields[0].value = "Standard terms and conditions apply.";
-				}
-
-				// Redemption Instructions
-				if (claimedReward.reward?.redemptionInstructions) {
-					pass.backFields[1].value =
-						claimedReward.reward.redemptionInstructions;
-				} else {
-					pass.backFields[1].value =
-						"Show this pass to staff at checkout. QR code must be scanned to validate.";
-				}
-
-				// Business Contact Info
-				if (
-					claimedReward.business?.contactEmail ||
-					claimedReward.business?.contactPhone
-				) {
-					const contactInfo = [];
-					if (claimedReward.business.contactPhone) {
-						contactInfo.push(`Phone: ${claimedReward.business.contactPhone}`);
-					}
-					if (claimedReward.business.contactEmail) {
-						contactInfo.push(`Email: ${claimedReward.business.contactEmail}`);
-					}
-					pass.backFields[2].value = contactInfo.join("\n");
-				} else {
-					pass.backFields[2].value = "Contact information not available.";
-				}
-
-				// About Points4Earth (already set in template)
-				// pass.backFields[3] already has the correct value
-
-				console.log("📊 Pass fields updated");
-
-				// ==================================================
-				// ADD BUSINESS LOGO AS THUMBNAIL (if available)
-				// ==================================================
-
-				if (claimedReward.business?.logo?.url) {
-					try {
-						const logoUrl = claimedReward.business.logo.url;
-						const fullLogoUrl = logoUrl.startsWith("http")
-							? logoUrl
-							: `${
-									process.env.STRAPI_URL ||
-									"https://lovely-charity-e91f9ec79a.strapiapp.com"
-							  }${logoUrl}`;
-
-						console.log("🖼️ Fetching business logo:", fullLogoUrl);
-
-						const fetch = (await import("node-fetch")).default;
-						const logoResponse = await fetch(fullLogoUrl);
-
-						if (logoResponse.ok) {
-							const logoBuffer = await logoResponse.buffer();
-							pass.addBuffer("thumbnail.png", logoBuffer);
-							pass.addBuffer("thumbnail@2x.png", logoBuffer);
-							console.log("✅ Business logo added to pass");
-						} else {
-							console.log(
-								"⚠️ Could not fetch business logo:",
-								logoResponse.status
-							);
-						}
-					} catch (logoError) {
-						console.log("⚠️ Error adding business logo:", logoError.message);
-						// Continue without logo - don't fail the whole pass generation
-					}
-				}
+				console.log("📊 Pass fields configured");
 
 				// Generate the pass buffer
 				const passBuffer = pass.getAsBuffer();
