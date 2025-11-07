@@ -66,7 +66,7 @@ module.exports = createCoreController(
 				const userPhone = user?.username || user?.phone;
 				const participantPhone = claimedReward.participant?.phone;
 
-				console.log("🔒 Security check:", {
+				console.log("🔐 Security check:", {
 					userPhone,
 					participantPhone,
 					match: userPhone === participantPhone,
@@ -104,7 +104,7 @@ module.exports = createCoreController(
 					"base64"
 				).toString("utf-8");
 
-				console.log("🔑 Certificates loaded from environment");
+				console.log("🔐 Certificates loaded from environment");
 
 				// Create pass
 				const pass = await PKPass.from(
@@ -123,6 +123,53 @@ module.exports = createCoreController(
 					}
 				);
 				console.log("✅ Pass created");
+
+				// Add pass data
+				pass.headerFields.push({
+					key: "business",
+					label: "BUSINESS",
+					value: claimedReward.business?.businessName || "Points4Earth",
+				});
+
+				pass.primaryFields.push({
+					key: "reward",
+					label: claimedReward.reward.title,
+					value: claimedReward.reward.subtitle || "",
+				});
+
+				pass.secondaryFields.push({
+					key: "expires",
+					label: "EXPIRES",
+					value: new Date(claimedReward.expiresAt).toLocaleDateString("en-US", {
+						month: "short",
+						day: "numeric",
+						year: "numeric",
+					}),
+					textAlignment: "PKTextAlignmentLeft",
+				});
+
+				pass.secondaryFields.push({
+					key: "points",
+					label: "POINTS REDEEMED",
+					value: claimedReward.pointsSpent.toString(),
+					textAlignment: "PKTextAlignmentRight",
+				});
+
+				if (claimedReward.reward.termsConditions) {
+					pass.backFields.push({
+						key: "terms",
+						label: "Terms & Conditions",
+						value: claimedReward.reward.termsConditions,
+					});
+				}
+
+				if (claimedReward.reward.redemptionInstructions) {
+					pass.backFields.push({
+						key: "instructions",
+						label: "How to Redeem",
+						value: claimedReward.reward.redemptionInstructions,
+					});
+				}
 
 				// Add QR code as barcode
 				pass.setBarcodes({
