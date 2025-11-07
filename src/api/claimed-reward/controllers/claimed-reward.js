@@ -66,7 +66,7 @@ module.exports = createCoreController(
 				const userPhone = user?.username || user?.phone;
 				const participantPhone = claimedReward.participant?.phone;
 
-				console.log("🔐 Security check:", {
+				console.log("🔒 Security check:", {
 					userPhone,
 					participantPhone,
 					match: userPhone === participantPhone,
@@ -104,7 +104,7 @@ module.exports = createCoreController(
 					"base64"
 				).toString("utf-8");
 
-				console.log("🔐 Certificates loaded from environment");
+				console.log("🔑 Certificates loaded from environment");
 
 				// Create pass
 				const pass = await PKPass.from(
@@ -124,20 +124,44 @@ module.exports = createCoreController(
 				);
 				console.log("✅ Pass created");
 
-				// Add pass data
+				// Add QR code as barcode
+				pass.setBarcodes({
+					message: qrData,
+					format: "PKBarcodeFormatQR",
+					messageEncoding: "iso-8859-1",
+				});
+
+				// ==================================================
+				// POPULATE PASS FIELDS WITH REWARD DATA
+				// ==================================================
+
+				// HEADER FIELD - Business name
 				pass.headerFields.push({
 					key: "business",
-					label: "BUSINESS",
-					value: claimedReward.business?.businessName || "Points4Earth",
+					label: "", // No label for cleaner header
+					value: claimedReward.business?.businessName || "Points4Earth Partner",
 				});
 
+				// PRIMARY FIELD - The reward title (main focus)
 				pass.primaryFields.push({
 					key: "reward",
-					label: claimedReward.reward.title,
-					value: claimedReward.reward.subtitle || "",
+					label: "", // No label - let the title be prominent
+					value: claimedReward.reward.title || "Reward",
 				});
 
+				// SECONDARY FIELDS - Appreciation message and context
+				const businessName =
+					claimedReward.business?.businessName || claimedReward.reward.title;
 				pass.secondaryFields.push({
+					key: "message",
+					label: "FROM",
+					value: `${businessName} appreciates your hard work!`,
+					textAlignment: "PKTextAlignmentLeft",
+				});
+
+				// AUXILIARY FIELDS - Important details in two columns
+				// Left: Expiration date
+				pass.auxiliaryFields.push({
 					key: "expires",
 					label: "EXPIRES",
 					value: new Date(claimedReward.expiresAt).toLocaleDateString("en-US", {
@@ -148,13 +172,15 @@ module.exports = createCoreController(
 					textAlignment: "PKTextAlignmentLeft",
 				});
 
-				pass.secondaryFields.push({
+				// Right: Points redeemed
+				pass.auxiliaryFields.push({
 					key: "points",
 					label: "POINTS REDEEMED",
-					value: claimedReward.pointsSpent.toString(),
+					value: `${claimedReward.pointsSpent}`,
 					textAlignment: "PKTextAlignmentRight",
 				});
 
+				// BACK FIELDS - Terms, instructions, about
 				if (claimedReward.reward.termsConditions) {
 					pass.backFields.push({
 						key: "terms",
@@ -171,11 +197,32 @@ module.exports = createCoreController(
 					});
 				}
 
-				// Add QR code as barcode
-				pass.setBarcodes({
-					message: qrData,
-					format: "PKBarcodeFormatQR",
-					messageEncoding: "iso-8859-1",
+				// Add business contact info if available
+				if (
+					claimedReward.business?.contactEmail ||
+					claimedReward.business?.contactPhone
+				) {
+					const contactInfo = [];
+					if (claimedReward.business.contactPhone) {
+						contactInfo.push(`Phone: ${claimedReward.business.contactPhone}`);
+					}
+					if (claimedReward.business.contactEmail) {
+						contactInfo.push(`Email: ${claimedReward.business.contactEmail}`);
+					}
+
+					pass.backFields.push({
+						key: "contact",
+						label: "Business Contact",
+						value: contactInfo.join("\n"),
+					});
+				}
+
+				// About Points4Earth
+				pass.backFields.push({
+					key: "about",
+					label: "About Points4Earth",
+					value:
+						"Rewards for doing good things! Earn points for eco-friendly travel and redeem for great rewards. Learn more at points4earth.com",
 				});
 
 				console.log("📊 Pass fields configured");
