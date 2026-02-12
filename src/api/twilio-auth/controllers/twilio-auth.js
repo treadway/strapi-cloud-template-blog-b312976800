@@ -25,7 +25,7 @@ module.exports = {
 				.verifications.create({
 					to: phoneNumber,
 					channel: "sms",
-					templateSid: "HX4a2b935a7c249a10339a4a7d621c55a1",
+					// templateSid: "HX4a2b935a7c249a10339a4a7d621c55a1",
 				});
 
 			console.log("Verification sent:", verification.status);
