@@ -61,6 +61,13 @@
 			"type": "enumeration",
 			"enum": ["pending", "completed", "cancelled"],
 			"default": "completed"
+		},
+		"routeCoordinates": {
+			"type": "json"
+		},
+		"distanceFeet": {
+			"type": "decimal",
+			"min": 0
 		}
 	}
 }
