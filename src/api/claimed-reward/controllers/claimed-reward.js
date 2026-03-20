@@ -60,16 +60,13 @@ module.exports = createCoreController(
 					return ctx.forbidden("You don't have permission to cancel this reward");
 				}
 
-				// Update status to cancelled
-				const updated = await strapi.db
+				// Delete the claimed reward entirely
+				await strapi.db
 					.query("api::claimed-reward.claimed-reward")
-					.update({
-						where: { id },
-						data: { status: "cancelled" },
-					});
+					.delete({ where: { id } });
 
-				console.log("✅ Claimed reward cancelled:", id);
-				return { data: updated };
+				console.log("✅ Claimed reward deleted:", id);
+				return { data: { id, deleted: true } };
 			} catch (error) {
 				console.error("❌ Error cancelling claimed reward:", error);
 				return ctx.badRequest("Failed to cancel reward: " + error.message);
