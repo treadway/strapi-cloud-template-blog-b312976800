@@ -52,5 +52,17 @@ module.exports = {
 				policies: [],
 			},
 		},
+
+		// ✅ Cancel a claimed reward - sets status to "cancelled"
+		// Uses token from query param (same pattern as generatePass)
+		{
+			method: "PUT",
+			path: "/claimed-rewards/:id/cancel",
+			handler: "claimed-reward.cancelClaim",
+			config: {
+				auth: false, // Public route with manual auth in controller
+				policies: [],
+			},
+		},
 	],
 };

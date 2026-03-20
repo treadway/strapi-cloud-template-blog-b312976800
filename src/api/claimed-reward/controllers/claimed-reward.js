@@ -12,6 +12,70 @@ module.exports = createCoreController(
 			return super.findOne(ctx);
 		},
 
+		async cancelClaim(ctx) {
+			try {
+				const { id } = ctx.params;
+				const queryToken = ctx.query.access_token;
+
+				console.log("🗑️ Cancelling claimed reward:", id);
+
+				// Verify token from query parameter
+				let user = null;
+				if (queryToken) {
+					try {
+						const decoded = await strapi.plugins[
+							"users-permissions"
+						].services.jwt.verify(queryToken);
+						user = await strapi
+							.query("plugin::users-permissions.user")
+							.findOne({ where: { id: decoded.id } });
+					} catch (err) {
+						return ctx.unauthorized("Invalid or expired token");
+					}
+				} else {
+					user = ctx.state.user;
+				}
+
+				if (!user) {
+					return ctx.unauthorized("Authentication required");
+				}
+
+				// Get claimed reward with participant
+				const claimedReward = await strapi.db
+					.query("api::claimed-reward.claimed-reward")
+					.findOne({
+						where: { id },
+						populate: ["participant"],
+					});
+
+				if (!claimedReward) {
+					return ctx.notFound("Claimed reward not found");
+				}
+
+				// Verify ownership
+				const userPhone = user?.username || user?.phone;
+				const participantPhone = claimedReward.participant?.phone;
+
+				if (userPhone !== participantPhone) {
+					return ctx.forbidden("You don't have permission to cancel this reward");
+				}
+
+				// Update status to cancelled
+				const updated = await strapi.db
+					.query("api::claimed-reward.claimed-reward")
+					.update({
+						where: { id },
+						data: { status: "cancelled" },
+					});
+
+				console.log("✅ Claimed reward cancelled:", id);
+				return { data: updated };
+			} catch (error) {
+				console.error("❌ Error cancelling claimed reward:", error);
+				return ctx.badRequest("Failed to cancel reward: " + error.message);
+			}
+		},
+
 		async generatePass(ctx) {
 			try {
 				const { id } = ctx.params;

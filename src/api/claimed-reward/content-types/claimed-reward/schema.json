@@ -56,7 +56,7 @@
 		},
 		"status": {
 			"type": "enumeration",
-			"enum": ["active", "redeemed", "expired"],
+			"enum": ["active", "redeemed", "expired", "cancelled"],
 			"default": "active"
 		}
 	}
