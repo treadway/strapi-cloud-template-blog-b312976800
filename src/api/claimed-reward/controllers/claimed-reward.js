@@ -105,7 +105,7 @@ module.exports = createCoreController(
 					.query("api::claimed-reward.claimed-reward")
 					.findOne({
 						where: { id },
-						populate: ["reward", "business", "participant"],
+						populate: ["reward", "reward.image", "business", "participant"],
 					});
 
 				if (!claimedReward) {
@@ -141,6 +141,7 @@ module.exports = createCoreController(
 				const reward = claimedReward.reward;
 				const business = claimedReward.business;
 				const hasBusiness = !!(business && business.businessName);
+				const hasImage = !!(reward?.image?.url);
 
 				const pass = await PKPass.from(
 					{
@@ -167,15 +168,27 @@ module.exports = createCoreController(
 				});
 
 				// ── PRIMARY: Reward title ──
+				// In storeCard, label renders as small text above,
+				// value renders as the large prominent text
 				pass.primaryFields.push({
 					key: "reward",
-					label: "",
+					label: hasBusiness ? business.businessName : "",
 					value: reward?.title || "Points4Earth Reward",
 				});
 
-				// ── SECONDARY: Business name (only if business exists) ──
-				if (hasBusiness) {
+				// ── SECONDARY: Description (if exists) ──
+				if (reward?.subtitle) {
 					pass.secondaryFields.push({
+						key: "subtitle",
+						label: "",
+						value: reward.subtitle,
+						textAlignment: "PKTextAlignmentLeft",
+					});
+				}
+
+				// ── AUXILIARY: Expires + Business (if exists) ──
+				if (hasBusiness) {
+					pass.auxiliaryFields.push({
 						key: "business",
 						label: "BUSINESS",
 						value: business.businessName,
@@ -183,7 +196,6 @@ module.exports = createCoreController(
 					});
 				}
 
-				// ── AUXILIARY: Expires ──
 				const expiresValue = claimedReward.expiresAt
 					? new Date(claimedReward.expiresAt).toLocaleDateString("en-US", {
 							month: "short",
@@ -196,7 +208,7 @@ module.exports = createCoreController(
 					key: "expires",
 					label: "EXPIRES",
 					value: expiresValue,
-					textAlignment: "PKTextAlignmentLeft",
+					textAlignment: hasBusiness ? "PKTextAlignmentRight" : "PKTextAlignmentLeft",
 				});
 
 				// ── BACK FIELDS ──
@@ -256,11 +268,37 @@ module.exports = createCoreController(
 					messageEncoding: "iso-8859-1",
 				});
 
-				// No strip image. No background image. Clean and simple.
+				// ── STRIP IMAGE (bring it back — fills the empty zone) ──
+				if (hasImage) {
+					try {
+						const imageUrl = reward.image.url;
+						const fullImageUrl = imageUrl.startsWith("http")
+							? imageUrl
+							: `${process.env.STRAPI_URL || "https://lovely-charity-e91f9ec79a.strapiapp.com"}${imageUrl}`;
+
+						console.log("🖼️ Fetching strip image:", fullImageUrl);
+
+						const fetch = (await import("node-fetch")).default;
+						const imageResponse = await fetch(fullImageUrl);
+
+						if (imageResponse.ok) {
+							const imageBuffer = await imageResponse.buffer();
+							pass.addBuffer("strip.png", imageBuffer);
+							pass.addBuffer("strip@2x.png", imageBuffer);
+							console.log("✅ Strip image added");
+						} else {
+							console.log("⚠️ Could not fetch strip image:", imageResponse.status);
+						}
+					} catch (imgError) {
+						console.log("⚠️ Error adding strip image:", imgError.message);
+					}
+				}
 
 				console.log("📊 Pass configured:", {
 					hasBusiness,
+					hasImage,
 					title: reward?.title,
+					subtitle: reward?.subtitle,
 					points: claimedReward.pointsSpent,
 				});
 
