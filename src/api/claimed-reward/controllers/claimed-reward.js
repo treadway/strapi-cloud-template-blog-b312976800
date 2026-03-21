@@ -80,11 +80,12 @@ module.exports = createCoreController(
 
 				console.log("🎫 Generating pass for claimed reward:", id);
 
-				// Verify token from query parameter
+				// ──────────────────────────────────────────────
+				// AUTHENTICATION
+				// ──────────────────────────────────────────────
 				let user = null;
 				if (queryToken) {
 					try {
-						// Decode and verify JWT token
 						const decoded = await strapi.plugins[
 							"users-permissions"
 						].services.jwt.verify(queryToken);
@@ -99,7 +100,6 @@ module.exports = createCoreController(
 						return ctx.unauthorized("Invalid or expired token");
 					}
 				} else {
-					// Try standard authentication
 					user = ctx.state.user;
 					console.log("👤 Authenticated user from header:", user?.id);
 				}
@@ -109,12 +109,14 @@ module.exports = createCoreController(
 					return ctx.unauthorized("Authentication required");
 				}
 
-				// Get claimed reward with all relations
+				// ──────────────────────────────────────────────
+				// FETCH CLAIMED REWARD + RELATIONS
+				// ──────────────────────────────────────────────
 				const claimedReward = await strapi.db
 					.query("api::claimed-reward.claimed-reward")
 					.findOne({
 						where: { id },
-						populate: ["reward", "business", "participant"],
+						populate: ["reward", "reward.image", "business", "business.logo", "participant"],
 					});
 
 				if (!claimedReward) {
@@ -122,8 +124,9 @@ module.exports = createCoreController(
 					return ctx.notFound("Claimed reward not found");
 				}
 
-				// SECURITY: Verify user owns this claimed reward
-				// Match user ID with participant phone
+				// ──────────────────────────────────────────────
+				// SECURITY: Verify ownership
+				// ──────────────────────────────────────────────
 				const userPhone = user?.username || user?.phone;
 				const participantPhone = claimedReward.participant?.phone;
 
@@ -142,7 +145,9 @@ module.exports = createCoreController(
 
 				console.log("✅ Authorization verified");
 
-				// Generate QR code if needed
+				// ──────────────────────────────────────────────
+				// QR CODE
+				// ──────────────────────────────────────────────
 				let qrData = claimedReward.qrCode;
 				if (!qrData) {
 					qrData = `P4E-${claimedReward.id}-${Date.now()}`;
@@ -152,7 +157,9 @@ module.exports = createCoreController(
 					});
 				}
 
-				// Decode certificates from environment variables
+				// ──────────────────────────────────────────────
+				// CERTIFICATES
+				// ──────────────────────────────────────────────
 				const wwdrCert = Buffer.from(process.env.WWDR_CERT, "base64").toString(
 					"utf-8"
 				);
@@ -167,7 +174,9 @@ module.exports = createCoreController(
 
 				console.log("🔐 Certificates loaded from environment");
 
-				// Create pass
+				// ──────────────────────────────────────────────
+				// CREATE PASS
+				// ──────────────────────────────────────────────
 				const pass = await PKPass.from(
 					{
 						model: path.resolve(__dirname, "../../../passkit.pass"),
@@ -180,73 +189,243 @@ module.exports = createCoreController(
 					},
 					{
 						serialNumber: `P4E-${claimedReward.id}`,
-						description: claimedReward.reward.title,
+						description: claimedReward.reward?.title || "Points4Earth Reward",
 					}
 				);
 				console.log("✅ Pass created");
 
-				// Add pass data
+				// ──────────────────────────────────────────────
+				// DETERMINE WHAT DATA WE HAVE
+				// ──────────────────────────────────────────────
+				const reward = claimedReward.reward;
+				const business = claimedReward.business;
+				const hasBusiness = !!(business && business.businessName);
+				const hasImage = !!(reward?.image?.url);
+
+				console.log("📋 Pass state:", {
+					hasBusiness,
+					hasImage,
+					businessName: business?.businessName || "none",
+					rewardTitle: reward?.title || "none",
+				});
+
+				// ──────────────────────────────────────────────
+				// HEADER: Points redeemed (top-right of pass)
+				// ──────────────────────────────────────────────
 				pass.headerFields.push({
-					key: "business",
-					label: "BUSINESS",
-					value: claimedReward.business?.businessName || "Points4Earth",
-				});
-
-				pass.primaryFields.push({
-					key: "reward",
-					label: claimedReward.reward.title,
-					value: claimedReward.reward.subtitle || "",
-				});
-
-				pass.secondaryFields.push({
-					key: "expires",
-					label: "EXPIRES",
-					value: new Date(claimedReward.expiresAt).toLocaleDateString("en-US", {
-						month: "short",
-						day: "numeric",
-						year: "numeric",
-					}),
-					textAlignment: "PKTextAlignmentLeft",
-				});
-
-				pass.secondaryFields.push({
 					key: "points",
 					label: "POINTS REDEEMED",
 					value: claimedReward.pointsSpent.toString(),
 					textAlignment: "PKTextAlignmentRight",
 				});
 
-				if (claimedReward.reward.termsConditions) {
+				// ──────────────────────────────────────────────
+				// PRIMARY: Reward title (big text)
+				// ──────────────────────────────────────────────
+				pass.primaryFields.push({
+					key: "reward",
+					label: "",
+					value: reward?.title || "Points4Earth Reward",
+				});
+
+				// ──────────────────────────────────────────────
+				// SECONDARY: Subtitle (business name) + description
+				// Only show business name as subtitle if we have one
+				// ──────────────────────────────────────────────
+				if (hasBusiness) {
+					pass.secondaryFields.push({
+						key: "subtitle",
+						label: "",
+						value: business.businessName,
+					});
+				}
+
+				// ──────────────────────────────────────────────
+				// AUXILIARY: Bottom row — Business Address + Expires
+				// Top-aligned, adapts based on whether business exists
+				// ──────────────────────────────────────────────
+				if (hasBusiness) {
+					// Build address string from available fields
+					const addressParts = [];
+					if (business.streetAddress) addressParts.push(business.streetAddress);
+
+					const cityStateZip = [];
+					if (business.city) cityStateZip.push(business.city);
+					if (business.state) cityStateZip.push(business.state);
+					if (business.zipCode) cityStateZip.push(business.zipCode);
+					if (cityStateZip.length > 0) {
+						// Format as "City, ST 80202"
+						let formatted = "";
+						if (business.city && business.state) {
+							formatted = `${business.city}, ${business.state}`;
+						} else if (business.city) {
+							formatted = business.city;
+						} else if (business.state) {
+							formatted = business.state;
+						}
+						if (business.zipCode) {
+							formatted = formatted ? `${formatted} ${business.zipCode}` : business.zipCode;
+						}
+						addressParts.push(formatted);
+					}
+
+					const fullAddress = addressParts.length > 0
+						? `${business.businessName}\n${addressParts.join("\n")}`
+						: business.businessName;
+
+					pass.auxiliaryFields.push({
+						key: "businessAddress",
+						label: "BUSINESS ADDRESS",
+						value: fullAddress,
+						textAlignment: "PKTextAlignmentLeft",
+					});
+				}
+
+				// Expires — always present
+				const expiresValue = claimedReward.expiresAt
+					? new Date(claimedReward.expiresAt).toLocaleDateString("en-US", {
+							month: "short",
+							day: "numeric",
+							year: "numeric",
+						})
+					: "No expiration";
+
+				pass.auxiliaryFields.push({
+					key: "expires",
+					label: "EXPIRES",
+					value: expiresValue,
+					textAlignment: hasBusiness ? "PKTextAlignmentRight" : "PKTextAlignmentLeft",
+				});
+
+				// ──────────────────────────────────────────────
+				// BACK FIELDS: Terms, instructions, contact, about
+				// ──────────────────────────────────────────────
+				if (reward?.description) {
+					pass.backFields.push({
+						key: "description",
+						label: "Description",
+						value: reward.description,
+					});
+				}
+
+				if (reward?.termsConditions) {
 					pass.backFields.push({
 						key: "terms",
 						label: "Terms & Conditions",
-						value: claimedReward.reward.termsConditions,
+						value: reward.termsConditions,
 					});
 				}
 
-				if (claimedReward.reward.redemptionInstructions) {
+				if (reward?.redemptionInstructions) {
 					pass.backFields.push({
 						key: "instructions",
 						label: "How to Redeem",
-						value: claimedReward.reward.redemptionInstructions,
+						value: reward.redemptionInstructions,
 					});
 				}
 
-				// Add QR code as barcode
+				// Business contact info on back (if business exists)
+				if (hasBusiness) {
+					const contactParts = [];
+					if (business.businessName) contactParts.push(business.businessName);
+					if (business.contactPhone) contactParts.push(`Phone: ${business.contactPhone}`);
+					if (business.contactEmail) contactParts.push(`Email: ${business.contactEmail}`);
+					if (business.website) contactParts.push(business.website);
+
+					if (contactParts.length > 0) {
+						pass.backFields.push({
+							key: "contact",
+							label: "Business Contact",
+							value: contactParts.join("\n"),
+						});
+					}
+				}
+
+				// Always include About P4E
+				pass.backFields.push({
+					key: "about",
+					label: "About Points4Earth",
+					value: "Earn points for eco-friendly transportation choices and redeem them for rewards from local businesses. Every trip makes a difference!",
+				});
+
+				// ──────────────────────────────────────────────
+				// BARCODE (QR)
+				// ──────────────────────────────────────────────
 				pass.setBarcodes({
 					message: qrData,
 					format: "PKBarcodeFormatQR",
 					messageEncoding: "iso-8859-1",
 				});
 
+				// ──────────────────────────────────────────────
+				// STRIP IMAGE (optional — from reward image)
+				// ──────────────────────────────────────────────
+				if (hasImage) {
+					try {
+						const imageUrl = reward.image.url;
+						const fullImageUrl = imageUrl.startsWith("http")
+							? imageUrl
+							: `${process.env.STRAPI_URL || "https://lovely-charity-e91f9ec79a.strapiapp.com"}${imageUrl}`;
+
+						console.log("🖼️ Fetching strip image:", fullImageUrl);
+
+						const fetch = (await import("node-fetch")).default;
+						const imageResponse = await fetch(fullImageUrl);
+
+						if (imageResponse.ok) {
+							const imageBuffer = await imageResponse.buffer();
+							// Strip image: 375x123 @1x, 750x246 @2x, 1125x369 @3x
+							// We'll add as both sizes — Apple will pick the right one
+							pass.addBuffer("strip.png", imageBuffer);
+							pass.addBuffer("strip@2x.png", imageBuffer);
+							console.log("✅ Strip image added to pass");
+						} else {
+							console.log("⚠️ Could not fetch strip image:", imageResponse.status);
+						}
+					} catch (imgError) {
+						console.log("⚠️ Error adding strip image:", imgError.message);
+						// Continue without image — don't fail the whole pass
+					}
+				}
+
+				// ──────────────────────────────────────────────
+				// BUSINESS LOGO AS THUMBNAIL (optional)
+				// ──────────────────────────────────────────────
+				if (hasBusiness && business.logo?.url) {
+					try {
+						const logoUrl = business.logo.url;
+						const fullLogoUrl = logoUrl.startsWith("http")
+							? logoUrl
+							: `${process.env.STRAPI_URL || "https://lovely-charity-e91f9ec79a.strapiapp.com"}${logoUrl}`;
+
+						console.log("🖼️ Fetching business logo:", fullLogoUrl);
+
+						const fetch = (await import("node-fetch")).default;
+						const logoResponse = await fetch(fullLogoUrl);
+
+						if (logoResponse.ok) {
+							const logoBuffer = await logoResponse.buffer();
+							pass.addBuffer("thumbnail.png", logoBuffer);
+							pass.addBuffer("thumbnail@2x.png", logoBuffer);
+							console.log("✅ Business logo added as thumbnail");
+						} else {
+							console.log("⚠️ Could not fetch business logo:", logoResponse.status);
+						}
+					} catch (logoError) {
+						console.log("⚠️ Error adding business logo:", logoError.message);
+						// Continue without logo
+					}
+				}
+
 				console.log("📊 Pass fields configured");
 
-				// Generate the pass buffer
+				// ──────────────────────────────────────────────
+				// GENERATE & RETURN
+				// ──────────────────────────────────────────────
 				const passBuffer = pass.getAsBuffer();
 
 				console.log("✅ Pass buffer generated, size:", passBuffer.length);
 
-				// Set response headers for download
 				ctx.set("Content-Type", "application/vnd.apple.pkpass");
 				ctx.set("Content-Disposition", "inline; filename=reward.pkpass");
 
