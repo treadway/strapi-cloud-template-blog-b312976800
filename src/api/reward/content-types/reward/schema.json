@@ -18,15 +18,19 @@
 		},
 		"title": {
 			"type": "string",
-			"required": true
+			"required": true,
+			"description": "Shown on Wallet Pass"
 		},
 		"subtitle": {
 			"type": "string",
-			"required": true
+			"required": true,
+			"maxLength": 44,
+			"description": "Shown on Wallet Pass"
 		},
 		"description": {
 			"type": "text",
-			"required": true
+			"required": true,
+			"description": "Not shown on Wallet Pass"
 		},
 		"pointsCost": {
 			"type": "integer",

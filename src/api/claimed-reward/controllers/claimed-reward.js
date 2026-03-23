@@ -233,7 +233,7 @@ module.exports = createCoreController(
 					pass.secondaryFields.push({
 						key: "description",
 						label: "",
-						value: reward.description,
+						value: reward.subtitle,
 						textAlignment: "PKTextAlignmentLeft",
 					});
 				}
