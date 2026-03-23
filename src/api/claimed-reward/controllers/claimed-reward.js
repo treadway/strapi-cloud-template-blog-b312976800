@@ -174,49 +174,43 @@ module.exports = createCoreController(
 				);
 
 				// ══════════════════════════════════════════
-				// LAYOUT (matches Apple storeCard layout):
+				// LAYOUT (Apple generic pass):
 				//
-				// ┌─────────────────────────────────┐
-				// │ [Logo]  businessName    HEADER → │ ← logo + logoText + headerFields
-				// ├─────────────────────────────────┤
-				// │         [STRIP IMAGE]            │ ← strip.png (reward image)
-				// ├─────────────────────────────────┤
-				// │ Reward Title                     │ ← primaryFields (big text)
-				// ├─────────────────────────────────┤
-				// │ Subtitle                         │ ← secondaryFields
-				// │ Description                      │
-				// ├─────────────────────────────────┤
-				// │ POINTS REDEEMED    EXPIRES       │ ← auxiliaryFields
-				// │ 300               Apr 20, 2026   │
-				// ├─────────────────────────────────┤
-				// │         [QR CODE]                │ ← barcode
-				// └─────────────────────────────────┘
+				// ┌──────────────────────────────────────┐
+				// │ [Logo] logoText     Redeem At        │ ← logo + logoText + headerFields
+				// │                     businessName     │
+				// ├──────────────────────────────────────┤
+				// │ title              [THUMBNAIL]       │ ← primaryFields + thumbnail.png
+				// │ subtitle           [  IMAGE  ]       │
+				// │ description        [         ]       │
+				// ├──────────────────────────────────────┤
+				// │ EXPIRES            POINTS SPENT      │ ← auxiliaryFields
+				// │ Apr 20, 2026       300               │
+				// ├──────────────────────────────────────┤
+				// │            [QR CODE]                 │ ← barcode
+				// └──────────────────────────────────────┘
 				// ══════════════════════════════════════════
 
-				// ── HEADER FIELD: Reward title (top-right, visible when stacked) ──
-				pass.headerFields.push({
-					key: "title",
-					label: "",
-					value: reward?.title || "Points4Earth Reward",
-				});
-
-				// ── PRIMARY FIELD: Reward title (large prominent text below strip) ──
-				pass.primaryFields.push({
-					key: "reward",
-					label: "",
-					value: reward?.title || "Points4Earth Reward",
-				});
-
-				// ── SECONDARY FIELDS: Subtitle + Description ──
-				if (reward?.subtitle) {
-					pass.secondaryFields.push({
-						key: "subtitle",
-						label: "",
-						value: reward.subtitle,
-						textAlignment: "PKTextAlignmentLeft",
+				// ── HEADER FIELD: "Redeem At" + business name (top-right) ──
+				if (hasBusiness) {
+					pass.headerFields.push({
+						key: "redeemAt",
+						label: "Redeem At",
+						value: business.businessName,
 					});
 				}
 
+				// ── PRIMARY FIELD: Title + subtitle combined ──
+				const titleParts = [reward?.title || "Points4Earth Reward"];
+				if (reward?.subtitle) titleParts.push(reward.subtitle);
+				
+				pass.primaryFields.push({
+					key: "reward",
+					label: "",
+					value: titleParts.join(" "),
+				});
+
+				// ── SECONDARY FIELD: Description ──
 				if (reward?.description) {
 					pass.secondaryFields.push({
 						key: "description",
@@ -226,14 +220,7 @@ module.exports = createCoreController(
 					});
 				}
 
-				// ── AUXILIARY FIELDS: Points redeemed + Expires ──
-				pass.auxiliaryFields.push({
-					key: "points",
-					label: "POINTS REDEEMED",
-					value: claimedReward.pointsSpent.toString(),
-					textAlignment: "PKTextAlignmentLeft",
-				});
-
+				// ── AUXILIARY FIELDS: Expires (left) + Points Spent (right) ──
 				const expiresValue = claimedReward.expiresAt
 					? new Date(claimedReward.expiresAt).toLocaleDateString("en-US", {
 							month: "short",
@@ -246,6 +233,13 @@ module.exports = createCoreController(
 					key: "expires",
 					label: "EXPIRES",
 					value: expiresValue,
+					textAlignment: "PKTextAlignmentLeft",
+				});
+
+				pass.auxiliaryFields.push({
+					key: "points",
+					label: "POINTS SPENT",
+					value: claimedReward.pointsSpent.toString(),
 					textAlignment: "PKTextAlignmentRight",
 				});
 
@@ -306,7 +300,7 @@ module.exports = createCoreController(
 					messageEncoding: "iso-8859-1",
 				});
 
-				// ── STRIP IMAGE (reward image) ──
+				// ── THUMBNAIL IMAGE (reward image — sits next to primary field) ──
 				if (hasImage) {
 					try {
 						const imageUrl = reward.image.url;
@@ -314,21 +308,21 @@ module.exports = createCoreController(
 							? imageUrl
 							: `${process.env.STRAPI_URL || "https://lovely-charity-e91f9ec79a.strapiapp.com"}${imageUrl}`;
 
-						console.log("🖼️ Fetching strip image:", fullImageUrl);
+						console.log("🖼️ Fetching thumbnail image:", fullImageUrl);
 
 						const fetch = (await import("node-fetch")).default;
 						const imageResponse = await fetch(fullImageUrl);
 
 						if (imageResponse.ok) {
 							const imageBuffer = await imageResponse.buffer();
-							pass.addBuffer("strip.png", imageBuffer);
-							pass.addBuffer("strip@2x.png", imageBuffer);
-							console.log("✅ Strip image added");
+							pass.addBuffer("thumbnail.png", imageBuffer);
+							pass.addBuffer("thumbnail@2x.png", imageBuffer);
+							console.log("✅ Thumbnail image added");
 						} else {
-							console.log("⚠️ Could not fetch strip image:", imageResponse.status);
+							console.log("⚠️ Could not fetch thumbnail:", imageResponse.status);
 						}
 					} catch (imgError) {
-						console.log("⚠️ Error adding strip image:", imgError.message);
+						console.log("⚠️ Error adding thumbnail:", imgError.message);
 					}
 				}
 
