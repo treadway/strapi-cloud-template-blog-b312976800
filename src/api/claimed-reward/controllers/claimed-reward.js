@@ -54,7 +54,9 @@ module.exports = createCoreController(
 				const participantPhone = claimedReward.participant?.phone;
 
 				if (userPhone !== participantPhone) {
-					return ctx.forbidden("You don't have permission to cancel this reward");
+					return ctx.forbidden(
+						"You don't have permission to cancel this reward"
+					);
 				}
 
 				await strapi.db
@@ -123,7 +125,9 @@ module.exports = createCoreController(
 				const participantPhone = claimedReward.participant?.phone;
 
 				if (userPhone !== participantPhone) {
-					return ctx.forbidden("You don't have permission to access this reward");
+					return ctx.forbidden(
+						"You don't have permission to access this reward"
+					);
 				}
 
 				console.log("✅ Authorization verified");
@@ -139,16 +143,24 @@ module.exports = createCoreController(
 				}
 
 				// ── CERTIFICATES ──
-				const wwdrCert = Buffer.from(process.env.WWDR_CERT, "base64").toString("utf-8");
-				const signerCert = Buffer.from(process.env.SIGNER_CERT, "base64").toString("utf-8");
-				const signerKey = Buffer.from(process.env.SIGNER_KEY, "base64").toString("utf-8");
+				const wwdrCert = Buffer.from(process.env.WWDR_CERT, "base64").toString(
+					"utf-8"
+				);
+				const signerCert = Buffer.from(
+					process.env.SIGNER_CERT,
+					"base64"
+				).toString("utf-8");
+				const signerKey = Buffer.from(
+					process.env.SIGNER_KEY,
+					"base64"
+				).toString("utf-8");
 
 				// ── RESOLVE DATA ──
 				const reward = claimedReward.reward;
 				// Business can come from claimed-reward directly OR through reward.business
 				const business = claimedReward.business || reward?.business || null;
 				const hasBusiness = !!(business && business.businessName);
-				const hasImage = !!(reward?.image?.url);
+				const hasImage = !!reward?.image?.url;
 
 				console.log("📋 Pass data:", {
 					hasBusiness,
@@ -208,8 +220,8 @@ module.exports = createCoreController(
 
 				// ── PRIMARY FIELD: Title + subtitle combined ──
 				const titleParts = [reward?.title || "Points4Earth Reward"];
-				if (reward?.subtitle) titleParts.push(reward.subtitle);
-				
+				// if (reward?.subtitle) titleParts.push(reward.subtitle);
+
 				pass.primaryFields.push({
 					key: "reward",
 					label: "",
@@ -232,7 +244,7 @@ module.exports = createCoreController(
 							month: "short",
 							day: "numeric",
 							year: "numeric",
-						})
+					  })
 					: "No expiration";
 
 				pass.auxiliaryFields.push({
@@ -278,10 +290,17 @@ module.exports = createCoreController(
 					const contactParts = [];
 					if (business.businessName) contactParts.push(business.businessName);
 					if (business.streetAddress) contactParts.push(business.streetAddress);
-					const cityLine = [business.city, business.state].filter(Boolean).join(", ");
-					if (cityLine) contactParts.push(business.zipCode ? `${cityLine} ${business.zipCode}` : cityLine);
-					if (business.contactPhone) contactParts.push(`Phone: ${business.contactPhone}`);
-					if (business.contactEmail) contactParts.push(`Email: ${business.contactEmail}`);
+					const cityLine = [business.city, business.state]
+						.filter(Boolean)
+						.join(", ");
+					if (cityLine)
+						contactParts.push(
+							business.zipCode ? `${cityLine} ${business.zipCode}` : cityLine
+						);
+					if (business.contactPhone)
+						contactParts.push(`Phone: ${business.contactPhone}`);
+					if (business.contactEmail)
+						contactParts.push(`Email: ${business.contactEmail}`);
 					if (business.website) contactParts.push(business.website);
 
 					if (contactParts.length > 0) {
@@ -296,7 +315,8 @@ module.exports = createCoreController(
 				pass.backFields.push({
 					key: "about",
 					label: "About Points4Earth",
-					value: "Earn points for eco-friendly transportation choices and redeem them for rewards from local businesses. Every trip makes a difference!",
+					value:
+						"Earn points for eco-friendly transportation choices and redeem them for rewards from local businesses. Every trip makes a difference!",
 				});
 
 				// ── BARCODE ──
@@ -312,7 +332,10 @@ module.exports = createCoreController(
 						const imageUrl = reward.image.url;
 						const fullImageUrl = imageUrl.startsWith("http")
 							? imageUrl
-							: `${process.env.STRAPI_URL || "https://lovely-charity-e91f9ec79a.strapiapp.com"}${imageUrl}`;
+							: `${
+									process.env.STRAPI_URL ||
+									"https://lovely-charity-e91f9ec79a.strapiapp.com"
+							  }${imageUrl}`;
 
 						console.log("🖼️ Fetching thumbnail image:", fullImageUrl);
 
@@ -325,7 +348,10 @@ module.exports = createCoreController(
 							pass.addBuffer("thumbnail@2x.png", imageBuffer);
 							console.log("✅ Thumbnail image added");
 						} else {
-							console.log("⚠️ Could not fetch thumbnail:", imageResponse.status);
+							console.log(
+								"⚠️ Could not fetch thumbnail:",
+								imageResponse.status
+							);
 						}
 					} catch (imgError) {
 						console.log("⚠️ Error adding thumbnail:", imgError.message);
