@@ -187,7 +187,7 @@ module.exports = createCoreController(
 						description: reward?.title || "Points4Earth Reward",
 						// logoText renders next to the logo image in the header
 						// Shows business name if available, empty if not
-						logoText: hasBusiness ? business.businessName : "",
+						// logoText: hasBusiness ? business.businessName : "",
 					}
 				);
 
