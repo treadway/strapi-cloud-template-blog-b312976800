@@ -105,7 +105,7 @@ module.exports = createCoreController(
 					.query("api::claimed-reward.claimed-reward")
 					.findOne({
 						where: { id },
-						populate: ["reward", "reward.image", "business", "participant"],
+						populate: ["reward", "reward.image", "reward.business", "business", "participant"],
 					});
 
 				if (!claimedReward) {
@@ -137,12 +137,23 @@ module.exports = createCoreController(
 				const signerCert = Buffer.from(process.env.SIGNER_CERT, "base64").toString("utf-8");
 				const signerKey = Buffer.from(process.env.SIGNER_KEY, "base64").toString("utf-8");
 
-				// ── CREATE PASS ──
+				// ── RESOLVE DATA ──
 				const reward = claimedReward.reward;
-				const business = claimedReward.business;
+				// Business can come from claimed-reward directly OR through reward.business
+				const business = claimedReward.business || reward?.business || null;
 				const hasBusiness = !!(business && business.businessName);
 				const hasImage = !!(reward?.image?.url);
 
+				console.log("📋 Pass data:", {
+					hasBusiness,
+					hasImage,
+					businessName: business?.businessName || "none",
+					title: reward?.title || "none",
+					subtitle: reward?.subtitle || "none",
+					description: reward?.description || "none",
+				});
+
+				// ── CREATE PASS ──
 				const pass = await PKPass.from(
 					{
 						model: path.resolve(__dirname, "../../../passkit.pass"),
@@ -156,27 +167,47 @@ module.exports = createCoreController(
 					{
 						serialNumber: `P4E-${claimedReward.id}`,
 						description: reward?.title || "Points4Earth Reward",
+						// logoText renders next to the logo image in the header
+						// Shows business name if available, empty if not
+						logoText: hasBusiness ? business.businessName : "",
 					}
 				);
 
-				// ── HEADER: Points redeemed (top-right) ──
-				pass.headerFields.push({
-					key: "points",
-					label: "POINTS REDEEMED",
-					value: claimedReward.pointsSpent.toString(),
-					textAlignment: "PKTextAlignmentRight",
-				});
+				// ══════════════════════════════════════════
+				// LAYOUT (matches Apple storeCard layout):
+				//
+				// ┌─────────────────────────────────┐
+				// │ [Logo]  businessName    HEADER → │ ← logo + logoText + headerFields
+				// ├─────────────────────────────────┤
+				// │         [STRIP IMAGE]            │ ← strip.png (reward image)
+				// ├─────────────────────────────────┤
+				// │ Reward Title                     │ ← primaryFields (big text)
+				// ├─────────────────────────────────┤
+				// │ Subtitle                         │ ← secondaryFields
+				// │ Description                      │
+				// ├─────────────────────────────────┤
+				// │ POINTS REDEEMED    EXPIRES       │ ← auxiliaryFields
+				// │ 300               Apr 20, 2026   │
+				// ├─────────────────────────────────┤
+				// │         [QR CODE]                │ ← barcode
+				// └─────────────────────────────────┘
+				// ══════════════════════════════════════════
 
-				// ── PRIMARY: Reward title ──
-				// In storeCard, label renders as small text above,
-				// value renders as the large prominent text
-				pass.primaryFields.push({
-					key: "reward",
-					label: hasBusiness ? business.businessName : "",
+				// ── HEADER FIELD: Reward title (top-right, visible when stacked) ──
+				pass.headerFields.push({
+					key: "title",
+					label: "",
 					value: reward?.title || "Points4Earth Reward",
 				});
 
-				// ── SECONDARY: Description (if exists) ──
+				// ── PRIMARY FIELD: Reward title (large prominent text below strip) ──
+				pass.primaryFields.push({
+					key: "reward",
+					label: "",
+					value: reward?.title || "Points4Earth Reward",
+				});
+
+				// ── SECONDARY FIELDS: Subtitle + Description ──
 				if (reward?.subtitle) {
 					pass.secondaryFields.push({
 						key: "subtitle",
@@ -186,15 +217,22 @@ module.exports = createCoreController(
 					});
 				}
 
-				// ── AUXILIARY: Expires + Business (if exists) ──
-				if (hasBusiness) {
-					pass.auxiliaryFields.push({
-						key: "business",
-						label: "BUSINESS",
-						value: business.businessName,
+				if (reward?.description) {
+					pass.secondaryFields.push({
+						key: "description",
+						label: "",
+						value: reward.description,
 						textAlignment: "PKTextAlignmentLeft",
 					});
 				}
+
+				// ── AUXILIARY FIELDS: Points redeemed + Expires ──
+				pass.auxiliaryFields.push({
+					key: "points",
+					label: "POINTS REDEEMED",
+					value: claimedReward.pointsSpent.toString(),
+					textAlignment: "PKTextAlignmentLeft",
+				});
 
 				const expiresValue = claimedReward.expiresAt
 					? new Date(claimedReward.expiresAt).toLocaleDateString("en-US", {
@@ -208,7 +246,7 @@ module.exports = createCoreController(
 					key: "expires",
 					label: "EXPIRES",
 					value: expiresValue,
-					textAlignment: hasBusiness ? "PKTextAlignmentRight" : "PKTextAlignmentLeft",
+					textAlignment: "PKTextAlignmentRight",
 				});
 
 				// ── BACK FIELDS ──
@@ -268,7 +306,7 @@ module.exports = createCoreController(
 					messageEncoding: "iso-8859-1",
 				});
 
-				// ── STRIP IMAGE (bring it back — fills the empty zone) ──
+				// ── STRIP IMAGE (reward image) ──
 				if (hasImage) {
 					try {
 						const imageUrl = reward.image.url;
@@ -294,13 +332,7 @@ module.exports = createCoreController(
 					}
 				}
 
-				console.log("📊 Pass configured:", {
-					hasBusiness,
-					hasImage,
-					title: reward?.title,
-					subtitle: reward?.subtitle,
-					points: claimedReward.pointsSpent,
-				});
+				console.log("📊 Pass fields configured");
 
 				// ── GENERATE ──
 				const passBuffer = pass.getAsBuffer();
