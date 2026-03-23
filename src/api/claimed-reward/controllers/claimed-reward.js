@@ -105,7 +105,13 @@ module.exports = createCoreController(
 					.query("api::claimed-reward.claimed-reward")
 					.findOne({
 						where: { id },
-						populate: ["reward", "reward.image", "reward.business", "business", "participant"],
+						populate: {
+							reward: {
+								populate: ["image", "business"],
+							},
+							business: true,
+							participant: true,
+						},
 					});
 
 				if (!claimedReward) {
