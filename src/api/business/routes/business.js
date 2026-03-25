@@ -2,9 +2,29 @@
 
 module.exports = {
 	routes: [
+		// ✅ App participants: read-only, no policy (ownerEmail never returned)
 		{
 			method: "GET",
 			path: "/businesses",
+			handler: "business.find",
+			config: {
+				policies: [],
+				auth: false,
+			},
+		},
+		{
+			method: "GET",
+			path: "/businesses/:id",
+			handler: "business.findOne",
+			config: {
+				policies: [],
+				auth: false,
+			},
+		},
+		// 🔒 Business Owner CMS access: policy-guarded
+		{
+			method: "GET",
+			path: "/businesses/owner/list",
 			handler: "business.find",
 			config: {
 				policies: ["global::isBusinessEmailOwner"],
@@ -12,7 +32,7 @@ module.exports = {
 		},
 		{
 			method: "GET",
-			path: "/businesses/:id",
+			path: "/businesses/owner/:id",
 			handler: "business.findOne",
 			config: {
 				policies: ["global::isBusinessEmailOwner"],
