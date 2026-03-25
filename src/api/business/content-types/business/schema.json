@@ -55,6 +55,18 @@
 		"contactPhone": {
 			"type": "string"
 		},
+		"category": {
+			"type": "enumeration",
+			"enum": [
+				"retail",
+				"restaurant",
+				"bar",
+				"entertainment",
+				"lifestyle",
+				"other"
+			],
+			"default": "other"
+		},
 		"isActive": {
 			"type": "boolean",
 			"default": true
