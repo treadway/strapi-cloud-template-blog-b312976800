@@ -46,7 +46,15 @@ module.exports = {
 				policies: ["global::isBusinessEmailOwner"],
 			},
 		},
-		// ✅ NO POST - business owner doesn't create business
+		// 🔒 Super Admin only — create new business
+		{
+			method: "POST",
+			path: "/businesses",
+			handler: "business.create",
+			config: {
+				policies: ["global::isBusinessEmailOwner"],
+			},
+		},
 		// ✅ NO DELETE - business owner can't delete their business
 	],
 };
