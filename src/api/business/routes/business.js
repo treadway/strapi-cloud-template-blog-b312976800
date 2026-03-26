@@ -46,14 +46,13 @@ module.exports = {
 				policies: ["global::isBusinessEmailOwner"],
 			},
 		},
-		// 🔓 TEMPORARY — open for seeding, lock down after bulk import
+		// 🔒 Super Admin only — create new business
 		{
 			method: "POST",
 			path: "/businesses",
 			handler: "business.create",
 			config: {
-				policies: [],
-				auth: false,
+				policies: ["global::isBusinessEmailOwner"],
 			},
 		},
 		// ✅ NO DELETE - business owner can't delete their business
