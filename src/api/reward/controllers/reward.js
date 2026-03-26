@@ -11,6 +11,15 @@ module.exports = createCoreController("api::reward.reward", ({ strapi }) => ({
 	},
 
 	async find(ctx) {
+		// Always populate image and business relation
+		ctx.query = {
+			...ctx.query,
+			populate: {
+				image: true,
+				business: true,
+			},
+		};
+
 		// Business owners see only their rewards in CMS
 		if (ctx.state.user?.role?.name === "Business Owner") {
 			ctx.query = {
@@ -21,6 +30,7 @@ module.exports = createCoreController("api::reward.reward", ({ strapi }) => ({
 				},
 			};
 		}
+
 		const response = await super.find(ctx);
 		return response;
 	},
