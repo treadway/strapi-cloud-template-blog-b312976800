@@ -6,37 +6,40 @@ module.exports = createCoreController(
 	"api::business.business",
 	({ strapi }) => ({
 		async find(ctx) {
-			// Always populate logo, photo, and linked rewards with their image
-			ctx.query = {
-				...ctx.query,
-				populate: {
-					logo: true,
-					photo: true,
-					rewards: {
-						populate: { image: true },
+			const { results, pagination } = await strapi
+				.service("api::business.business")
+				.find({
+					...ctx.query,
+					populate: {
+						logo: true,
+						photo: true,
+						rewards: {
+							populate: { image: true },
+						},
 					},
-				},
-			};
-			return super.find(ctx);
+				});
+
+			return { data: results, meta: { pagination } };
 		},
 
 		async findOne(ctx) {
-			// Same populate for single business lookup
-			ctx.query = {
-				...ctx.query,
-				populate: {
-					logo: true,
-					photo: true,
-					rewards: {
-						populate: { image: true },
+			const { id } = ctx.params;
+			const result = await strapi
+				.service("api::business.business")
+				.findOne(id, {
+					populate: {
+						logo: true,
+						photo: true,
+						rewards: {
+							populate: { image: true },
+						},
 					},
-				},
-			};
-			return super.findOne(ctx);
+				});
+
+			return { data: result };
 		},
 
 		async create(ctx) {
-			// Set owner to current user
 			ctx.request.body.data.owner = ctx.state.user.id;
 			return super.create(ctx);
 		},
