@@ -34,6 +34,12 @@
 			"required": false,
 			"allowedTypes": ["images"]
 		},
+		"photo": {
+			"type": "media",
+			"multiple": false,
+			"required": false,
+			"allowedTypes": ["images"]
+		},
 		"website": {
 			"type": "string"
 		},
