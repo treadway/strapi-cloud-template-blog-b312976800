@@ -64,14 +64,25 @@
 		"category": {
 			"type": "enumeration",
 			"enum": [
-				"retail",
-				"restaurant",
-				"bar",
-				"entertainment",
-				"lifestyle",
-				"other"
+				"Retail",
+				"Restaurant",
+				"Dining",
+				"Cafe",
+				"Bar",
+				"Entertainment",
+				"Lifestyle",
+				"Healthcare & Fitness",
+				"Beauty",
+				"Recreation",
+				"Shared",
+				"Other"
 			],
 			"default": "other"
+		},
+		"hours": {
+			"type": "component",
+			"repeatable": true,
+			"component": "business.hours"
 		},
 		"isActive": {
 			"type": "boolean",
