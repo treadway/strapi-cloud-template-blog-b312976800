@@ -1,494 +1,93 @@
-[
-	{
-		"businessName": "The Boardroom",
-		"description": "Upscale lounge and bar offering craft cocktails and a social atmosphere.",
-		"category": "Bar",
-		"website": "https://theboardroom.com",
-		"contactEmail": "info@theboardroom.com",
-		"contactPhone": "925-555-1201",
-		"streetAddress": "1516 N Main St",
-		"city": "Walnut Creek",
-		"state": "California",
-		"zipCode": "94596",
-		"hours": [
-			{ "day": "Monday", "open": "16:00", "close": "00:00", "isClosed": false },
-			{
-				"day": "Tuesday",
-				"open": "16:00",
-				"close": "00:00",
-				"isClosed": false
-			},
-			{
-				"day": "Wednesday",
-				"open": "16:00",
-				"close": "00:00",
-				"isClosed": false
-			},
-			{
-				"day": "Thursday",
-				"open": "16:00",
-				"close": "01:00",
-				"isClosed": false
-			},
-			{ "day": "Friday", "open": "16:00", "close": "02:00", "isClosed": false },
-			{
-				"day": "Saturday",
-				"open": "16:00",
-				"close": "02:00",
-				"isClosed": false
-			},
-			{ "day": "Sunday", "open": "16:00", "close": "22:00", "isClosed": false }
-		]
+{
+	"kind": "collectionType",
+	"collectionName": "businesses",
+	"info": {
+		"singularName": "business",
+		"pluralName": "businesses",
+		"displayName": "Business",
+		"description": "Reward creator businesses"
 	},
-	{
-		"businessName": "Elite Barbershop",
-		"description": "Modern barbershop specializing in clean cuts and community vibes.",
-		"category": "Beauty",
-		"website": "https://elitebarbershop.com",
-		"contactEmail": "contact@elitebarbershop.com",
-		"contactPhone": "925-555-2202",
-		"streetAddress": "1320 Locust St",
-		"city": "Walnut Creek",
-		"state": "California",
-		"zipCode": "94596",
-		"hours": [
-			{ "day": "Monday", "isClosed": true },
-			{
-				"day": "Tuesday",
-				"open": "09:00",
-				"close": "18:00",
-				"isClosed": false
-			},
-			{
-				"day": "Wednesday",
-				"open": "09:00",
-				"close": "18:00",
-				"isClosed": false
-			},
-			{
-				"day": "Thursday",
-				"open": "09:00",
-				"close": "19:00",
-				"isClosed": false
-			},
-			{ "day": "Friday", "open": "09:00", "close": "19:00", "isClosed": false },
-			{
-				"day": "Saturday",
-				"open": "09:00",
-				"close": "17:00",
-				"isClosed": false
-			},
-			{ "day": "Sunday", "open": "10:00", "close": "16:00", "isClosed": false }
-		]
+	"options": {
+		"draftAndPublish": false
 	},
-	{
-		"businessName": "Bourbon Highway",
-		"description": "Whiskey-forward bar and restaurant featuring premium bourbon and classic American fare.",
-		"category": "Bar",
-		"website": "https://bourbonhighway.com",
-		"contactEmail": "info@bourbonhighway.com",
-		"contactPhone": "925-555-3303",
-		"streetAddress": "1700 N Broadway",
-		"city": "Walnut Creek",
-		"state": "California",
-		"zipCode": "94596",
-		"hours": [
-			{ "day": "Monday", "open": "15:00", "close": "23:00", "isClosed": false },
-			{
-				"day": "Tuesday",
-				"open": "15:00",
-				"close": "23:00",
-				"isClosed": false
-			},
-			{
-				"day": "Wednesday",
-				"open": "15:00",
-				"close": "23:00",
-				"isClosed": false
-			},
-			{
-				"day": "Thursday",
-				"open": "15:00",
-				"close": "00:00",
-				"isClosed": false
-			},
-			{ "day": "Friday", "open": "15:00", "close": "01:30", "isClosed": false },
-			{
-				"day": "Saturday",
-				"open": "12:00",
-				"close": "01:30",
-				"isClosed": false
-			},
-			{ "day": "Sunday", "open": "12:00", "close": "22:00", "isClosed": false }
-		]
+	"owner": {
+		"type": "relation",
+		"relation": "manyToOne",
+		"target": "plugin::users-permissions.user"
 	},
-	{
-		"businessName": "Ace Hardware",
-		"description": "Trusted neighborhood hardware store for tools, home improvement, and expert advice.",
-		"category": "Retail",
-		"website": "https://www.acehardware.com",
-		"contactEmail": "support@acehardware.com",
-		"contactPhone": "925-555-4404",
-		"streetAddress": "1520 Palos Verdes Mall",
-		"city": "Walnut Creek",
-		"state": "California",
-		"zipCode": "94597",
-		"hours": [
-			{ "day": "Monday", "open": "08:00", "close": "19:00", "isClosed": false },
-			{
-				"day": "Tuesday",
-				"open": "08:00",
-				"close": "19:00",
-				"isClosed": false
-			},
-			{
-				"day": "Wednesday",
-				"open": "08:00",
-				"close": "19:00",
-				"isClosed": false
-			},
-			{
-				"day": "Thursday",
-				"open": "08:00",
-				"close": "19:00",
-				"isClosed": false
-			},
-			{ "day": "Friday", "open": "08:00", "close": "19:00", "isClosed": false },
-			{
-				"day": "Saturday",
-				"open": "08:00",
-				"close": "18:00",
-				"isClosed": false
-			},
-			{ "day": "Sunday", "open": "09:00", "close": "17:00", "isClosed": false }
-		]
-	},
-	{
-		"businessName": "Original Joe's",
-		"description": "Classic Italian-American restaurant known for generous portions and lively dining.",
-		"category": "Restaurant",
-		"website": "https://originaljoes.com",
-		"contactEmail": "info@originaljoes.com",
-		"contactPhone": "925-555-5505",
-		"streetAddress": "1475 N Broadway",
-		"city": "Walnut Creek",
-		"state": "California",
-		"zipCode": "94596",
-		"hours": [
-			{ "day": "Monday", "open": "11:00", "close": "21:00", "isClosed": false },
-			{
-				"day": "Tuesday",
-				"open": "11:00",
-				"close": "21:00",
-				"isClosed": false
-			},
-			{
-				"day": "Wednesday",
-				"open": "11:00",
-				"close": "21:00",
-				"isClosed": false
-			},
-			{
-				"day": "Thursday",
-				"open": "11:00",
-				"close": "22:00",
-				"isClosed": false
-			},
-			{ "day": "Friday", "open": "11:00", "close": "23:00", "isClosed": false },
-			{
-				"day": "Saturday",
-				"open": "11:00",
-				"close": "23:00",
-				"isClosed": false
-			},
-			{ "day": "Sunday", "open": "11:00", "close": "21:00", "isClosed": false }
-		]
-	},
-	{
-		"businessName": "Gibson's",
-		"description": "Upscale steakhouse-style dining with a focus on quality cuts and fine service.",
-		"category": "Restaurant",
-		"website": "https://gibsonsrestaurant.com",
-		"contactEmail": "info@gibsonsrestaurant.com",
-		"contactPhone": "925-555-6606",
-		"streetAddress": "1550 Mt Diablo Blvd",
-		"city": "Walnut Creek",
-		"state": "California",
-		"zipCode": "94596",
-		"hours": [
-			{ "day": "Monday", "open": "11:30", "close": "21:00", "isClosed": false },
-			{
-				"day": "Tuesday",
-				"open": "11:30",
-				"close": "21:00",
-				"isClosed": false
-			},
-			{
-				"day": "Wednesday",
-				"open": "11:30",
-				"close": "21:00",
-				"isClosed": false
-			},
-			{
-				"day": "Thursday",
-				"open": "11:30",
-				"close": "22:00",
-				"isClosed": false
-			},
-			{ "day": "Friday", "open": "11:30", "close": "23:00", "isClosed": false },
-			{
-				"day": "Saturday",
-				"open": "17:00",
-				"close": "23:00",
-				"isClosed": false
-			},
-			{ "day": "Sunday", "open": "17:00", "close": "21:00", "isClosed": false }
-		]
-	},
-	{
-		"businessName": "Diablo Hills Golf Course",
-		"description": "Public golf course offering scenic fairways and accessible play for all skill levels.",
-		"category": "Recreation",
-		"website": "https://diablohillsgolfcourse.com",
-		"contactEmail": "info@diablohillsgolfcourse.com",
-		"contactPhone": "925-555-7707",
-		"streetAddress": "1551 Marchbanks Dr",
-		"city": "Walnut Creek",
-		"state": "California",
-		"zipCode": "94598",
-		"hours": [
-			{ "day": "Monday", "open": "06:00", "close": "18:00", "isClosed": false },
-			{
-				"day": "Tuesday",
-				"open": "06:00",
-				"close": "18:00",
-				"isClosed": false
-			},
-			{
-				"day": "Wednesday",
-				"open": "06:00",
-				"close": "18:00",
-				"isClosed": false
-			},
-			{
-				"day": "Thursday",
-				"open": "06:00",
-				"close": "18:00",
-				"isClosed": false
-			},
-			{ "day": "Friday", "open": "06:00", "close": "18:00", "isClosed": false },
-			{
-				"day": "Saturday",
-				"open": "06:00",
-				"close": "18:00",
-				"isClosed": false
-			},
-			{ "day": "Sunday", "open": "06:00", "close": "18:00", "isClosed": false }
-		]
-	},
-	{
-		"businessName": "The Greenery",
-		"description": "Lively sports bar offering drinks, games, and a fun social atmosphere.",
-		"category": "Bar",
-		"website": "https://thegreenerybar.com",
-		"contactEmail": "info@thegreenerybar.com",
-		"contactPhone": "925-555-8808",
-		"streetAddress": "1340 N Main St",
-		"city": "Walnut Creek",
-		"state": "California",
-		"zipCode": "94596",
-		"hours": [
-			{ "day": "Monday", "open": "15:00", "close": "00:00", "isClosed": false },
-			{
-				"day": "Tuesday",
-				"open": "15:00",
-				"close": "00:00",
-				"isClosed": false
-			},
-			{
-				"day": "Wednesday",
-				"open": "15:00",
-				"close": "00:00",
-				"isClosed": false
-			},
-			{
-				"day": "Thursday",
-				"open": "15:00",
-				"close": "01:00",
-				"isClosed": false
-			},
-			{ "day": "Friday", "open": "12:00", "close": "02:00", "isClosed": false },
-			{
-				"day": "Saturday",
-				"open": "12:00",
-				"close": "02:00",
-				"isClosed": false
-			},
-			{ "day": "Sunday", "open": "12:00", "close": "22:00", "isClosed": false }
-		]
-	},
-	{
-		"businessName": "Riley's",
-		"description": "Casual neighborhood bar known for drink specials and a laid-back vibe.",
-		"category": "Bar",
-		"website": "https://rileysbar.com",
-		"contactEmail": "info@rileysbar.com",
-		"contactPhone": "925-555-9909",
-		"streetAddress": "1544 Bonanza St",
-		"city": "Walnut Creek",
-		"state": "California",
-		"zipCode": "94596",
-		"hours": [
-			{ "day": "Monday", "open": "15:00", "close": "00:00", "isClosed": false },
-			{
-				"day": "Tuesday",
-				"open": "15:00",
-				"close": "00:00",
-				"isClosed": false
-			},
-			{
-				"day": "Wednesday",
-				"open": "15:00",
-				"close": "00:00",
-				"isClosed": false
-			},
-			{
-				"day": "Thursday",
-				"open": "15:00",
-				"close": "01:00",
-				"isClosed": false
-			},
-			{ "day": "Friday", "open": "15:00", "close": "02:00", "isClosed": false },
-			{
-				"day": "Saturday",
-				"open": "12:00",
-				"close": "02:00",
-				"isClosed": false
-			},
-			{ "day": "Sunday", "open": "12:00", "close": "22:00", "isClosed": false }
-		]
-	},
-	{
-		"businessName": "Il Fornaio",
-		"description": "Authentic Italian restaurant featuring house-made pasta and traditional recipes.",
-		"category": "Restaurant",
-		"website": "https://www.ilfornaio.com",
-		"contactEmail": "info@ilfornaio.com",
-		"contactPhone": "925-555-1111",
-		"streetAddress": "1430 Mt Diablo Blvd",
-		"city": "Walnut Creek",
-		"state": "California",
-		"zipCode": "94596",
-		"hours": [
-			{ "day": "Monday", "open": "11:30", "close": "21:00", "isClosed": false },
-			{
-				"day": "Tuesday",
-				"open": "11:30",
-				"close": "21:00",
-				"isClosed": false
-			},
-			{
-				"day": "Wednesday",
-				"open": "11:30",
-				"close": "21:00",
-				"isClosed": false
-			},
-			{
-				"day": "Thursday",
-				"open": "11:30",
-				"close": "22:00",
-				"isClosed": false
-			},
-			{ "day": "Friday", "open": "11:30", "close": "22:00", "isClosed": false },
-			{
-				"day": "Saturday",
-				"open": "11:00",
-				"close": "22:00",
-				"isClosed": false
-			},
-			{ "day": "Sunday", "open": "11:00", "close": "21:00", "isClosed": false }
-		]
-	},
-	{
-		"businessName": "The Cooperage",
-		"description": "Modern dining and cocktail venue with a focus on community and craft drinks.",
-		"category": "Dining",
-		"website": "https://thecooperage.com",
-		"contactEmail": "info@thecooperage.com",
-		"contactPhone": "925-555-1212",
-		"streetAddress": "1820 N Main St",
-		"city": "Walnut Creek",
-		"state": "California",
-		"zipCode": "94596",
-		"hours": [
-			{ "day": "Monday", "isClosed": true },
-			{
-				"day": "Tuesday",
-				"open": "16:00",
-				"close": "22:00",
-				"isClosed": false
-			},
-			{
-				"day": "Wednesday",
-				"open": "16:00",
-				"close": "22:00",
-				"isClosed": false
-			},
-			{
-				"day": "Thursday",
-				"open": "16:00",
-				"close": "23:00",
-				"isClosed": false
-			},
-			{ "day": "Friday", "open": "16:00", "close": "00:00", "isClosed": false },
-			{
-				"day": "Saturday",
-				"open": "10:00",
-				"close": "00:00",
-				"isClosed": false
-			},
-			{ "day": "Sunday", "open": "10:00", "close": "21:00", "isClosed": false }
-		]
-	},
-	{
-		"businessName": "Fiesta Lane",
-		"description": "Friendly neighborhood cafe serving coffee and light bites.",
-		"category": "Cafe",
-		"website": "https://fiestalane.com",
-		"contactEmail": "info@fiestalane.com",
-		"contactPhone": "925-555-1313",
-		"streetAddress": "1200 Locust St",
-		"city": "Walnut Creek",
-		"state": "California",
-		"zipCode": "94596",
-		"hours": [
-			{ "day": "Monday", "open": "07:00", "close": "15:00", "isClosed": false },
-			{
-				"day": "Tuesday",
-				"open": "07:00",
-				"close": "15:00",
-				"isClosed": false
-			},
-			{
-				"day": "Wednesday",
-				"open": "07:00",
-				"close": "15:00",
-				"isClosed": false
-			},
-			{
-				"day": "Thursday",
-				"open": "07:00",
-				"close": "15:00",
-				"isClosed": false
-			},
-			{ "day": "Friday", "open": "07:00", "close": "16:00", "isClosed": false },
-			{
-				"day": "Saturday",
-				"open": "08:00",
-				"close": "16:00",
-				"isClosed": false
-			},
-			{ "day": "Sunday", "open": "08:00", "close": "14:00", "isClosed": false }
-		]
+	"pluginOptions": {},
+	"attributes": {
+		"businessName": {
+			"type": "string",
+			"required": true
+		},
+		"ownerEmail": {
+			"type": "email",
+			"required": false
+		},
+		"description": {
+			"type": "richtext"
+		},
+		"logo": {
+			"type": "media",
+			"multiple": false,
+			"required": false,
+			"allowedTypes": ["images"]
+		},
+		"photo": {
+			"type": "media",
+			"multiple": false,
+			"required": false,
+			"allowedTypes": ["images"]
+		},
+		"website": {
+			"type": "string"
+		},
+		"streetAddress": {
+			"type": "string"
+		},
+		"city": {
+			"type": "string"
+		},
+		"state": {
+			"type": "string"
+		},
+		"zipCode": {
+			"type": "string"
+		},
+		"contactEmail": {
+			"type": "email"
+		},
+		"contactPhone": {
+			"type": "string"
+		},
+		"category": {
+			"type": "enumeration",
+			"enum": [
+				"Retail",
+				"Restaurant",
+				"Dining",
+				"Cafe",
+				"Bar",
+				"Entertainment",
+				"Lifestyle",
+				"Healthcare & Fitness",
+				"Beauty",
+				"Recreation",
+				"Shared",
+				"Other"
+			],
+			"default": "other"
+		},
+		"isActive": {
+			"type": "boolean",
+			"default": true
+		},
+		"rewards": {
+			"type": "relation",
+			"relation": "oneToMany",
+			"target": "api::reward.reward",
+			"mappedBy": "business"
+		}
 	}
-]
+}
