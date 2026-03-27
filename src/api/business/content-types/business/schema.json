@@ -79,6 +79,11 @@
 			],
 			"default": "other"
 		},
+		"hours": {
+			"type": "component",
+			"repeatable": true,
+			"component": "business.hours"
+		},
 		"isActive": {
 			"type": "boolean",
 			"default": true
