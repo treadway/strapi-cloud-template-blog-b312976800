@@ -4,34 +4,29 @@ const { createCoreController } = require("@strapi/strapi").factories;
 
 module.exports = createCoreController("api::reward.reward", ({ strapi }) => ({
 	async create(ctx) {
-		// Auto-set owner to current user
 		ctx.request.body.data.owner = ctx.state.user.id;
 		const response = await super.create(ctx);
 		return response;
 	},
 
 	async find(ctx) {
-		// Always populate image and business relation
-		ctx.query = {
-			...ctx.query,
-			populate: {
-				image: true,
-				business: true,
-			},
-		};
-
-		// Business owners see only their rewards in CMS
+		// Build filters — business owners only see their own rewards
+		const filters = { ...ctx.query?.filters };
 		if (ctx.state.user?.role?.name === "Business Owner") {
-			ctx.query = {
-				...ctx.query,
-				filters: {
-					...ctx.query?.filters,
-					owner: ctx.state.user.id,
-				},
-			};
+			filters.owner = ctx.state.user.id;
 		}
 
-		const response = await super.find(ctx);
-		return response;
+		const { results, pagination } = await strapi
+			.service("api::reward.reward")
+			.find({
+				...ctx.query,
+				filters,
+				populate: {
+					image: true,
+					business: true,
+				},
+			});
+
+		return { data: results, meta: { pagination } };
 	},
 }));
