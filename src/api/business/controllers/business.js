@@ -42,7 +42,7 @@ module.exports = createCoreController(
 		},
 
 		async create(ctx) {
-			ctx.request.body.data.owner = ctx.state.user.id;
+			const userId = ctx.state.user.id;
 
 			const defaultHours = [
 				"Monday",
