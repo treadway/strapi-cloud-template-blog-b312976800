@@ -43,6 +43,31 @@ module.exports = createCoreController(
 
 		async create(ctx) {
 			ctx.request.body.data.owner = ctx.state.user.id;
+
+			const defaultHours = [
+				"Monday",
+				"Tuesday",
+				"Wednesday",
+				"Thursday",
+				"Friday",
+				"Saturday",
+				"Sunday",
+			].map((day) => ({
+				day,
+				isClosed: false,
+				open: "09:00:00",
+				close: "17:00:00",
+			}));
+
+			if (
+				!ctx.request.body.data.hours ||
+				ctx.request.body.data.hours.length === 0
+			) {
+				ctx.request.body.data.hours = defaultHours;
+			}
+
+			ctx.request.body.data.owner = userId;
+
 			return super.create(ctx);
 		},
 	})
