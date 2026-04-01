@@ -6,7 +6,9 @@ export default {
 
 		app.customFields.register({
 			name: "hours-editor",
-			pluginId: "app", // ✅ FIXED
+
+			pluginId: "app",
+			plugin: "app", // ✅ REQUIRED in Strapi 5
 
 			type: "json",
 
