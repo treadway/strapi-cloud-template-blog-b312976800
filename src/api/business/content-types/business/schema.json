@@ -79,11 +79,10 @@
 			],
 			"default": "other"
 		},
-		"hours": {
-			"type": "component",
-			"repeatable": true,
-			"component": "business.hours"
-		},
+		"openingHours": {
+			"type": "json",
+			"customField": "plugin::opening-hours.opening-hours"
+		}
 		"isActive": {
 			"type": "boolean",
 			"default": true
