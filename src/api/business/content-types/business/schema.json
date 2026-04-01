@@ -81,7 +81,7 @@
 		},
 		"openingHours": {
 			"type": "json",
-			"customField": "plugin::opening-hours.opening-hours"
+			"customField": "plugin::opening-hours.opening-hours",
 		}
 		"isActive": {
 			"type": "boolean",
