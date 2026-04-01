@@ -7,4 +7,7 @@ module.exports = ({ env }) => ({
 			},
 		},
 	},
+	"opening-hours": {
+		enabled: true,
+	},
 });
