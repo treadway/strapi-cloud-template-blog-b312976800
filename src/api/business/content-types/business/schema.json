@@ -80,8 +80,7 @@
 			"default": "other"
 		},
 		"hours": {
-			"type": "json",
-			"customField": "app.hours-editor"
+			"type": "json"
 		},
 		"isActive": {
 			"type": "boolean",
