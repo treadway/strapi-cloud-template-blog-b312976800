@@ -8,7 +8,7 @@
 		"day": {
 			"type": "enumeration",
 			"enum": [
-				"Monday",
+				"Mondaze",
 				"Tuesday",
 				"Wednesday",
 				"Thursday",
