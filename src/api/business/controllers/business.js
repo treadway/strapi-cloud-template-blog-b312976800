@@ -11,7 +11,6 @@ module.exports = createCoreController(
 				populate: {
 					logo: true,
 					photo: true,
-					hours: true,
 					rewards: {
 						populate: { image: true },
 					},
@@ -26,7 +25,6 @@ module.exports = createCoreController(
 				populate: {
 					logo: true,
 					photo: true,
-					hours: true,
 					rewards: {
 						populate: { image: true },
 					},
