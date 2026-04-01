@@ -2,7 +2,8 @@ import HoursEditor from "./components/HoursEditor";
 
 export default {
 	register(app) {
-		console.log("NEWER ADMIN LOADED");
+		console.log("✅ ADMIN LOADED");
+
 		app.customFields.register({
 			name: "hours-editor",
 			pluginId: "global",
