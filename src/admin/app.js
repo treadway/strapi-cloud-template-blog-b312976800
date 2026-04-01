@@ -6,7 +6,8 @@ export default {
 
 		app.customFields.register({
 			name: "hours-editor",
-			pluginId: "global",
+			pluginId: "app", // ✅ FIXED
+
 			type: "json",
 
 			intlLabel: {

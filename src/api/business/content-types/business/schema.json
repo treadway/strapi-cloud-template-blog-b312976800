@@ -81,7 +81,7 @@
 		},
 		"hours": {
 			"type": "json",
-			"customField": "global.hours-editor"
+			"customField": "app.hours-editor"
 		},
 		"isActive": {
 			"type": "boolean",
