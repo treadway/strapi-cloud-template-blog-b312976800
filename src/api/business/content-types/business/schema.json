@@ -80,9 +80,8 @@
 			"default": "other"
 		},
 		"hours": {
-			"type": "component",
-			"repeatable": true,
-			"component": "business.hours"
+			"type": "json",
+			"customField": "global.hours-editor"
 		},
 		"isActive": {
 			"type": "boolean",
