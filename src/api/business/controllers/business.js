@@ -41,11 +41,8 @@ module.exports = createCoreController(
 			return { data: result };
 		},
 
-		// ⚠️ TEMP: skip owner assignment when auth is disabled (bulk import)
 		async create(ctx) {
-			if (ctx.state.user) {
-				ctx.request.body.data.owner = ctx.state.user.id;
-			}
+			ctx.request.body.data.owner = ctx.state.user.id;
 			return super.create(ctx);
 		},
 	})
