@@ -54,7 +54,8 @@
 			"type": "media",
 			"multiple": false,
 			"required": false,
-			"allowedTypes": ["images"]
+			"allowedTypes": ["images"],
+			"description": "Displayed at 4:3 (landscape) in the app. Images will fill the area and be center-cropped — keep important content away from the edges. Use imagePosition/imageScale/imageFocus to fine-tune. Recommended size: 1200x900px or similar 4:3 ratio."
 		},
 		"imagePosition": {
 			"type": "enumeration",

@@ -32,13 +32,15 @@
 			"type": "media",
 			"multiple": false,
 			"required": false,
-			"allowedTypes": ["images"]
+			"allowedTypes": ["images"],
+			"description": "Displayed as a square in the app. For best results upload a square image (1:1 ratio). Non-square logos will be shown in full (not cropped) and centered within the square area."
 		},
 		"photo": {
 			"type": "media",
 			"multiple": false,
 			"required": false,
-			"allowedTypes": ["images"]
+			"allowedTypes": ["images"],
+			"description": "Displayed at 4:3 (landscape) in the app. Images will fill the area and be center-cropped — keep important content away from the edges. Recommended size: 1200x900px or similar 4:3 ratio."
 		},
 		"website": {
 			"type": "string"
