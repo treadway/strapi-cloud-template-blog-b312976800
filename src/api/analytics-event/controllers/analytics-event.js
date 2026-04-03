@@ -16,10 +16,6 @@ module.exports = createCoreController(
 		 * POST /api/analytics-events/batch
 		 *
 		 * Body: { events: [ { action, screen, participantId, version, build, deviceTimestamp, meta? } ] }
-		 *
-		 * Creates all events in a single request so the app can
-		 * queue events locally and flush them periodically rather
-		 * than firing one HTTP request per interaction.
 		 */
 		async batch(ctx) {
 			const { events } = ctx.request.body;
@@ -28,27 +24,24 @@ module.exports = createCoreController(
 				return ctx.badRequest("Body must contain a non-empty `events` array");
 			}
 
-			// Cap batch size to prevent abuse
 			if (events.length > 200) {
 				return ctx.badRequest("Maximum 200 events per batch");
 			}
 
+			// Strapi v5: use strapi.db.query() for direct DB inserts (fastest for batch)
 			const results = await Promise.all(
 				events.map((evt) =>
-					strapi.entityService.create(
-						"api::analytics-event.analytics-event",
-						{
-							data: {
-								version: evt.version,
-								build: evt.build,
-								action: evt.action,
-								screen: evt.screen || null,
-								participantId: evt.participantId || null,
-								deviceTimestamp: evt.deviceTimestamp,
-								meta: evt.meta || null,
-							},
-						}
-					)
+					strapi.db.query("api::analytics-event.analytics-event").create({
+						data: {
+							version: evt.version,
+							build: evt.build,
+							action: evt.action,
+							screen: evt.screen || null,
+							participantId: evt.participantId || null,
+							deviceTimestamp: evt.deviceTimestamp,
+							meta: evt.meta || null,
+						},
+					})
 				)
 			);
 
