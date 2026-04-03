@@ -47,12 +47,14 @@ module.exports = {
 			},
 		},
 		// 🔒 Super Admin only — create new business
+		// ⚠️ TEMP: policy disabled for bulk import — RE-ENABLE after import!
 		{
 			method: "POST",
 			path: "/businesses",
 			handler: "business.create",
 			config: {
-				policies: ["global::isBusinessEmailOwner"],
+				policies: [],
+				auth: false,
 			},
 		},
 		// ✅ NO DELETE - business owner can't delete their business
