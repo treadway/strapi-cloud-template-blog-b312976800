@@ -1,0 +1,40 @@
+{
+	"kind": "collectionType",
+	"collectionName": "analytics_events",
+	"info": {
+		"singularName": "analytics-event",
+		"pluralName": "analytics-events",
+		"displayName": "Analytics Event",
+		"description": "App usage analytics — actions, screens, participants"
+	},
+	"options": {
+		"draftAndPublish": false
+	},
+	"attributes": {
+		"version": {
+			"type": "string",
+			"required": true
+		},
+		"build": {
+			"type": "string",
+			"required": true
+		},
+		"action": {
+			"type": "string",
+			"required": true
+		},
+		"screen": {
+			"type": "string"
+		},
+		"participantId": {
+			"type": "string"
+		},
+		"deviceTimestamp": {
+			"type": "datetime",
+			"required": true
+		},
+		"meta": {
+			"type": "json"
+		}
+	}
+}
